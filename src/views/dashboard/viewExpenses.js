@@ -1,9 +1,18 @@
-import React from 'react'
+import React, { useContext } from 'react'
+import { AuthContext } from '../../context/authContext'
+import { useNavigate } from 'react-router-dom'
 
 const ViewExpenses = () => {
-  console.log("view expenses");
+  const { user, logOut } = useContext(AuthContext)
+  const navigate = useNavigate()
+  const handleLogOut = async () => {
+    await logOut().then(() => navigate("/auth"))
+  }
   return (
-    <div>viewExpenses</div>
+    <>
+      <div>Hello {user?.displayName}</div>
+      <button onClick={handleLogOut}>Logout</button>
+    </>
   )
 }
 
