@@ -1,6 +1,15 @@
-import { useState } from "react"
+import { useContext, useState } from "react"
+import { AuthContext } from "../../context/authContext"
+import { auth } from "../../firebase"
+import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 
 export default function Login() {
+
+  console.log("Login page")
+  const { user, setUser} = useContext(AuthContext)
+  const provider = new GoogleAuthProvider();
+
+  console.log("User", user);
 
   const [loginData, setLoginData] = useState({})
   const [showPassword, setShowPassword] = useState(false)
@@ -14,6 +23,31 @@ export default function Login() {
 
     console.log(loginData, "Received data")
   }
+
+  const googleSignIn = () => {
+signInWithPopup(auth, provider)
+  .then((result) => {
+    // This gives you a Google Access Token. You can use it to access the Google API.
+    const credential = GoogleAuthProvider.credentialFromResult(result);
+    const token = credential.accessToken;
+    // The signed-in user info.
+    const user = result.user;
+    console.log(user, "logged in user");
+    // IdP data available using getAdditionalUserInfo(result)
+    // ...
+  }).catch((error) => {
+    // Handle Errors here.
+    const errorCode = error.code;
+    const errorMessage = error.message;
+    // The email of the user's account used.
+    const email = error.customData.email;
+    // The AuthCredential type that was used.
+    const credential = GoogleAuthProvider.credentialFromError(error);
+    // ...
+  });
+
+
+   }
   return (
     <>
 
@@ -54,7 +88,7 @@ export default function Login() {
                   Password
                 </label>
                 <div className="text-sm">
-                  <a href="#" className="font-semibold text-indigo-600 hover:text-indigo-500">
+                  <a href="/" className="font-semibold text-indigo-600 hover:text-indigo-500">
                     Forgot password?
                   </a>
                 </div>
@@ -94,7 +128,7 @@ export default function Login() {
             <p className="my-10 text-sm text-gray-400 text-center">or continue with</p>
             <div className="space-x-6 flex justify-center">
               <button type="button"
-                className="border-none outline-none">
+                className="border-none outline-none" onClick={googleSignIn}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="30px" className="inline" viewBox="0 0 512 512">
                   <path fill="#fbbd00"
                     d="M120 256c0-25.367 6.989-49.13 19.131-69.477v-86.308H52.823C18.568 144.703 0 198.922 0 256s18.568 111.297 52.823 155.785h86.308v-86.308C126.989 305.13 120 281.367 120 256z"
