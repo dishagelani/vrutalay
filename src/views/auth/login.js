@@ -1,12 +1,11 @@
-import { useContext, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { AuthContext } from "../../context/authContext"
-import { auth } from "../../firebase"
-import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
+import Alert from "../../components/alert";
 
 export default function Login() {
 
-  const { user, googleLogIn } = useContext(AuthContext)
+  const { error, setError, googleLogIn,loginWithEmailAndPassword } = useContext(AuthContext)
 
 
   const [loginData, setLoginData] = useState({})
@@ -16,38 +15,51 @@ export default function Login() {
     setShowPassword(!showPassword)
   }
 
-  const handleSignIn = (e) => {
+  const signInWithEmailAndPassword = async(e) => {
     e.preventDefault()
 
     console.log(loginData, "Received data")
+    await loginWithEmailAndPassword(loginData.email,loginData.password).then(() => { navigte("/") })
   }
 
-  const googleSignIn = async () => {
+  
+  const signInWithGoogle = async () => {
     await googleLogIn().then(() => { navigte("/") })
-
   }
+
+  useEffect(() => {
+    if(error)
+      setTimeout(() => {
+        setError(null)
+      }, "3000");
+  },[error])
 
 
   return (
     <>
+   
+    {error && <div className="flex justify-center my-2">
+      <Alert message={error}/>
+    </div>}
+      <div className="h-screen">
 
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          <img
+          {/* <img
             className="mx-auto h-10 w-auto"
             src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
             alt="Your Company"
-          />
+            /> */}
           <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
             Sign in to your account
           </h2>
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form className="space-y-6" onSubmit={handleSignIn} >
-            <div>
+          {/* <form className="space-y-6" onSubmit={signInWithEmailAndPassword} > */}
+            {/* <div>
               <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
-                Email address
+              Email address
               </label>
               <div className="mt-2">
                 <input
@@ -58,28 +70,28 @@ export default function Login() {
                   onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
                   value={loginData?.email}
                 />
-              </div>
-            </div>
-
-            <div>
-              <div className="flex items-center justify-between">
-                <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Password
-                </label>
-                <div className="text-sm">
-                  <a href="/" className="font-semibold text-indigo-600 hover:text-indigo-500">
-                    Forgot password?
-                  </a>
                 </div>
-              </div>
-              <div className="mt-2 relative">
-                <input
+            </div> */}
 
-                  type={showPassword ? "text" : "password"} autoComplete="current-password"
-                  required
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
+            {/* <div>
+              <div className="flex items-center justify-between">
+              <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900"
+              >
+              Password
+              </label>
+                <div className="text-sm">
+                <a href="/" className="font-semibold text-indigo-600 hover:text-indigo-500">
+                Forgot password?
+                </a>
+                </div>
+                </div>
+                <div className="mt-2 relative">
+                <input
+                
+                type={showPassword ? "text" : "password"} autoComplete="current-password"
+                required
+                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
                   value={loginData?.password}
                 />
                 <button type="button" className="absolute inset-y-0 right-0 pr-2 flex items-center" onClick={toggleShowPassword}> {showPassword ?
@@ -94,21 +106,21 @@ export default function Login() {
                   </svg>
                 } </button>
               </div>
-            </div>
+            </div> */}
 
-            <div>
+            {/* <div>
               <button
                 type="submit"
                 className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-
-              >
+                
+                >
                 Sign in
-              </button>
-            </div>
-            <p className="my-10 text-sm text-gray-400 text-center">or continue with</p>
+                </button>
+                </div> */}
+            {/* <p className="my-10 text-sm text-gray-400 text-center">or continue with</p> */}
             <div className="space-x-6 flex justify-center">
               <button type="button"
-                className="border-none outline-none" onClick={googleSignIn}>
+                className="border-none outline-none" onClick={signInWithGoogle}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="30px" className="inline" viewBox="0 0 512 512">
                   <path fill="#fbbd00"
                     d="M120 256c0-25.367 6.989-49.13 19.131-69.477v-86.308H52.823C18.568 144.703 0 198.922 0 256s18.568 111.297 52.823 155.785h86.308v-86.308C126.989 305.13 120 281.367 120 256z"
@@ -132,9 +144,10 @@ export default function Login() {
               </button>
 
             </div>
-          </form>
+          {/* </form> */}
 
 
+                    </div>
         </div>
       </div>
     </>

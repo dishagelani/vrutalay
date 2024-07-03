@@ -3,15 +3,16 @@ import { AuthContextProvider } from './context/authContext';
 import Routes from "./routes/index"
 
 const App = () => {
- return (
-    <div>
-      <AuthContextProvider>
-         <Routes />
-       </AuthContextProvider>
+   return (
+      <div className='auth'>
+         <AuthContextProvider>
+            
+            <Routes />
+         </AuthContextProvider>
 
 
-    </div>
- );
-};
+      </div>
+   )
+}
 
 export default App;
