@@ -38,7 +38,7 @@ export default function Navbar() {
                             
                             />
                         }
-                             <h3 class="mx-2 font-semibold text-base text-blueGray-700">{user?.displayName}</h3>
+                             <h3 className="mx-2 font-semibold text-base text-blueGray-700">{user?.displayName}</h3>
                             <div className="absolute inset-y-0 right-0 flex items-center sm:static sm:inset-auto sm:ml-6 sm:pr-0">
                                 <button
                                     type="button"

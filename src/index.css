@@ -16,3 +16,15 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.react-datepicker-wrapper{
+  width: -webkit-fill-available;
+}
+
+.react-datepicker__view-calendar-icon input{
+  padding: 0px 5px !important;
+  font-size: 90%;
+}
+.react-datepicker__input-container .react-datepicker__calendar-icon{
+  padding:  5px!important;
+}
