@@ -5,7 +5,7 @@ const Table = () => {
   return (
     
 
-<div class="relative overflow-x-auto">
+<div class="relative m-4 overflow-x-auto shadow-md sm:rounded-lg">
     <table class="w-full text-sm text-left rtl:text-right ">
         <thead class="text-xs uppercase bg-gray-50">
             <tr>

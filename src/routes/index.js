@@ -7,7 +7,7 @@ import {
 import Protected from "./protected";
 import { isAuthenticated } from "./helper";
 import Login from "../views/auth/login";  
-import ViewExpenses from '../views/dashboard/viewExpenses';
+import ViewExpenses from '../views/dashboard/expenses';
 import { Breakdown } from "../views/dashboard/breakdown";
 import AddExpense from "../views/dashboard/addExpense";
   const router = createBrowserRouter(

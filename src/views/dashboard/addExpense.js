@@ -23,7 +23,7 @@ export default function AddExpense() {
 
             <Navbar />
             <form onSubmit={handleSubmit}>
-                <div className="space-y-12 mx-5">
+                <div className="space-y-12 mx-4">
                     <div className="py-4">
                         <p className="mt-1 text-sm leading-6 text-gray-600 font-bold text-center bg-gradient-to-r from-cyan-500 to-blue-500 text-gradient">
                             {quotes[moment().day()]}           </p>

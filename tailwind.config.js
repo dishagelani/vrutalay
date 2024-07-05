@@ -12,6 +12,11 @@ module.exports = {
           '-webkit-background-clip': 'text',
           'color': 'transparent',
         },
+        '.border-gradient': {
+          
+          'border-image': 'linear-gradient(to right, #06b6d4, #3b82f6) 1',
+        },
+        
       })
     },
   ],
