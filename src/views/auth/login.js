@@ -3,11 +3,10 @@ import { AuthContext } from "../../context/authContext"
 import { useNavigate } from "react-router-dom";
 import Alert from "../../components/alert";
 
+
 export default function Login() {
 
   const { error, setError, googleLogIn,loginWithEmailAndPassword } = useContext(AuthContext)
-
-
   const [loginData, setLoginData] = useState({})
   const [showPassword, setShowPassword] = useState(false)
   const navigte = useNavigate()

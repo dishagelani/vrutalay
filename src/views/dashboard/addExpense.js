@@ -75,9 +75,6 @@ export default function AddExpense() {
                                     />
                                 </div>
                             </div>
-
-
-
                             <div className="sm:col-span-3">
                                 <label htmlFor="category" className="block text-sm font-medium leading-6 text-gray-900">
                                     Category

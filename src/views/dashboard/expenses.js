@@ -28,8 +28,8 @@ const ViewExpenses = () => {
       
       {/* BUTTON TO ADD EXPENSE */}
 
-      <div class="group fixed bottom-0 right-0 p-2  flex items-end justify-end w-24 h-24 ">
-        <div class="text-white cursor-pointer shadow-xl flex items-center justify-center p-3 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 z-50 absolute  " onClick={() => navigate('/add-expense')}>
+      <div className="group fixed bottom-0 right-0 p-2  flex items-end justify-end w-24 h-24 ">
+        <div className="text-white cursor-pointer shadow-xl flex items-center justify-center p-3 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 z-50 absolute  " onClick={() => navigate('/add-expense')}>
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
           </svg>
