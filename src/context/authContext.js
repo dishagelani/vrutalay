@@ -75,9 +75,7 @@ const AuthContextProvider = ({ children }) => {
         return () => unSubscribe();
     }, []);
 
-    useEffect(() => {
-
-    }, [])
+   
 
     return (
         <AuthContext.Provider value={{ user, error, setError, googleLogIn, logOut, loginWithEmailAndPassword }}>

@@ -1,35 +1,37 @@
 import React from 'react'
-
-const Table = () => {
+import moment from 'moment'
+const Table = ({expenses}) => {
     const titles = ['Date', 'Amount', 'Description']
+    console.log(expenses)
+
   return (
     
 
-<div className="relative m-4 overflow-x-auto shadow-md sm:rounded-lg">
+<div className="relative mt-4 overflow-x-auto shadow-md sm:rounded-lg">
     <table className="w-full text-sm text-left rtl:text-right ">
         <thead className="text-xs uppercase bg-gray-50">
             <tr>
             {titles.map((title) => (
-                                <th  scope="col" className="px-4 py-3">
+                                <th  scope="col" className="px-4 py-3" key={title}>
                                     {title}
                                 </th>
                             ))}
             </tr>
         </thead>
         <tbody>
-            <tr className="bg-white">
+            {expenses.map(expense =>  <tr key={expense.id} className="bg-white">
             <td className="px-4 py-4">
-                    Silver
+           {moment(expense.date.seconds * 1000 + Math.floor(expense.date.nanoseconds / 1000000)).format('DD MMM')}
+                
                 </td>
                 <td className="px-4 py-4">
-                    Laptop
+                   $ {expense.amount}
                 </td>
                 <td scope="row" className="px-4  py-4 whitespace-normal ">
-                Apple MacBook Pro 17"Apple MacBook Pro 17"Apple MacBook Pro 17"Apple MacBook Pro 17"
-                </td>
-                
-                
-            </tr>
+                {expense.description}
+                </td>                
+            </tr> ) }
+           
            
         </tbody>
     </table>
