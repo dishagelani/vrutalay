@@ -19,6 +19,7 @@ import AddExpense from "../views/dashboard/addExpense";
            <Route index element={  <ViewExpenses />} />
            <Route path="/breakdown" element={  <Breakdown />} />
            <Route path="/add-expense" element={  <AddExpense />} />
+           <Route path="/edit-expense" element={  <AddExpense />} />
       </Route>
       <Route path="/auth" element={<Login />} loader={async () => await isAuthenticated()} />
       </Route>

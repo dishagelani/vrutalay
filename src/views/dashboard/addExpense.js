@@ -4,15 +4,29 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Navbar from "../../components/navbar";
 import Alert from "../../components/alert";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { ExpenseContext } from "../../context/expenseContext";
 
 export default function AddExpense() {
+
+    let initialObject = {date : moment()._d, amount : '', description : '', category : ''}
+
+    const location = useLocation();
+
+    if (location.state) {
+        const { date,amount,description,category,id } = location.state
+        initialObject.id = id
+        initialObject.date = moment(date && date.seconds * 1000 + Math.floor(date.nanoseconds / 1000000 ))._d
+        initialObject.amount = amount
+        initialObject.description = description
+        initialObject.category = category
+    }
+
     const navigate = useNavigate()
 
-    const { setError, error, addExpenseToFirestore} = useContext(ExpenseContext)
+    const { setError, error, addExpenseToFirestore,editExpenseInFirestore } = useContext(ExpenseContext)
 
-    const [data, setData] = useState({ date: moment()._d, amount: null, description: null, category: null })
+    const [data, setData] = useState(initialObject)
 
     const quotes = ['Money, like emotions, is something you must control to keep your life on the right track !', 'Making money is a happiness. Making other people happy is also a happiness. So why don’t we do both and maximize our happiness?', 'Don’t get so busy making a living that you forget to make a life !', 'Wealth is not his that has it, but his that enjoys it !', 'Money is only a tool. It will take you wherever you wish, but it will not replace you as the driver. It will give you the means for the satisfaction of your desires, but it will not provide you with desires !', 'You must gain control over your money or the lack of it will forever control you !', 'Happiness is not in the mere possession of money; it lies in the joy of achievement, in the thrill of creative effort !']
 
@@ -20,16 +34,21 @@ export default function AddExpense() {
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        const { date, amount, description, category } = data
-        
-             addExpenseToFirestore(date, amount, description, category).then(() => navigate("/"))
 
-        
+        console.log("data ===> ", data);
+
+        if(initialObject.id){
+            editExpenseInFirestore(data).then(() => navigate('/'))
+        }else{
+
+            addExpenseToFirestore(data).then(() => navigate("/"))
+        }
     }
 
     useEffect(() => {
         setTimeout(() => { setError(null) }, 3000)
     }, [error])
+
     return (
         <>
 
@@ -52,8 +71,8 @@ export default function AddExpense() {
 
                                 <div className="p-0 mt-1 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
 
-                                    <DatePicker required className="ml-1" showIcon toggleCalendarOnIconClick selected={data?.date} onChange={(date) => { setData({ ...data, date }) }} icon={<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="size-6 absolute right-0  ">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5m-9-6h.008v.008H12v-.008ZM12 15h.008v.008H12V15Zm0 2.25h.008v.008H12v-.008ZM9.75 15h.008v.008H9.75V15Zm0 2.25h.008v.008H9.75v-.008ZM7.5 15h.008v.008H7.5V15Zm0 2.25h.008v.008H7.5v-.008Zm6.75-4.5h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V15Zm0 2.25h.008v.008h-.008v-.008Zm2.25-4.5h.008v.008H16.5v-.008Zm0 2.25h.008v.008H16.5V15Z" />
+                                    <DatePicker required className="ml-1" showIcon toggleCalendarOnIconClick selected={data?.date} onChange={(date) => { setData({ ...data, date }) }} icon={<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6 absolute right-0  ">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5m-9-6h.008v.008H12v-.008ZM12 15h.008v.008H12V15Zm0 2.25h.008v.008H12v-.008ZM9.75 15h.008v.008H9.75V15Zm0 2.25h.008v.008H9.75v-.008ZM7.5 15h.008v.008H7.5V15Zm0 2.25h.008v.008H7.5v-.008Zm6.75-4.5h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V15Zm0 2.25h.008v.008h-.008v-.008Zm2.25-4.5h.008v.008H16.5v-.008Zm0 2.25h.008v.008H16.5V15Z" />
                                     </svg>
                                     } />
                                 </div>

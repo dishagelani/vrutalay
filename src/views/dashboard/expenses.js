@@ -7,21 +7,20 @@ import { ExpenseContext } from '../../context/expenseContext'
 
 const Expenses = () => {
   const navigate = useNavigate()
+
+  const [fetchData,setFetchData] = useState(true)
   const [expenses,setExpenses] = useState(null)
 
-  const {getAllExpensesFromFirestore} =  useContext(ExpenseContext)
+  const {getAllExpensesFromFirestore, totalAmount} =  useContext(ExpenseContext)
+
+  const setFlag = (data) => {
+    setFetchData(data)
+  }
 
   useEffect( () => {
     async function getAllExpenses() {
 
-      const querySnapshot = await getAllExpensesFromFirestore()
-
-      querySnapshot.forEach(doc => console.log(doc.data().date))
-
-      const expensesArray = querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
+      const expensesArray = await getAllExpensesFromFirestore()
 
 
       setExpenses(expensesArray)
@@ -29,7 +28,7 @@ const Expenses = () => {
     }
     getAllExpenses()
 
-  },[])
+  },[fetchData])
 
   return (
     <>
@@ -43,7 +42,7 @@ const Expenses = () => {
       <div className="rounded-t mb-0 py-4 border-0">
         <div className="relative flex justify-between max-w-full flex-grow flex-1 font-semibold text-blueGray-700">
           <p className="month">{moment().format('MMMM YYYY')}</p>
-          <p>$1000</p>
+          <p>${totalAmount}</p>
         </div>
         <div className="relative w-full max-w-full flex-grow flex-1 text-right">
           <p className="bg-gradient-to-r from-cyan-500 to-blue-500 text-gradient text-xs font-bold cursor-pointer" onClick={() => navigate("/breakdown")} >View breakdown</p>
@@ -53,7 +52,7 @@ const Expenses = () => {
       {/* TABLE OF CONTENT */}
  {expenses && expenses.length ? 
       
-      <Table expenses={expenses} />
+      <Table expenses={expenses}  setFlag={setFlag} fetchData/>
        :  
        <div className="relative h-70vh flex items-center justify-center">
        <p className="bg-gradient-to-r from-cyan-500 to-blue-500 text-gradient font-bold text-center" >No expenses yet ! </p> <span>🤩</span>
