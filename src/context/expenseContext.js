@@ -57,7 +57,7 @@ const ExpenseContextProvider = ({ children }) => {
               }));
               
               setTotalAmount(documents.reduce((accumulator, current) => {
-                  return accumulator + Number(current.amount);
+                  return accumulator + parseFloat(current.amount);
                 }, 0))
 
             return documents

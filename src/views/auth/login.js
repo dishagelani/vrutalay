@@ -17,7 +17,6 @@ export default function Login() {
   const signInWithEmailAndPassword = async(e) => {
     e.preventDefault()
 
-    console.log(loginData, "Received data")
     await loginWithEmailAndPassword(loginData.email,loginData.password).then(() => { navigte("/") })
   }
 

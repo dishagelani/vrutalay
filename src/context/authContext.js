@@ -13,10 +13,8 @@ const AuthContextProvider = ({ children }) => {
     const provider = new GoogleAuthProvider();
 
     const loginWithEmailAndPassword = async (email, password) => {
-        console.log("email and password", email, password);
         try {
             const userCredential = await signInWithEmailAndPassword(auth, email, password)
-            console.log("Credentiasl", userCredential);
             if (!userCredential) {
                 alert("You are not authorized to access the applicatioin !")
             }

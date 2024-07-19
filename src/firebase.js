@@ -4,7 +4,6 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 
-console.log("API key : ", process.env.REACT_APP_APIKEY);
 
 // Test config
 const firebaseConfig = {

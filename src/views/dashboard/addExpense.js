@@ -34,13 +34,9 @@ export default function AddExpense() {
 
     const handleSubmit = (e) => {
         e.preventDefault()
-
-        console.log("data ===> ", data);
-
         if(initialObject.id){
             editExpenseInFirestore(data).then(() => navigate('/'))
         }else{
-
             addExpenseToFirestore(data).then(() => navigate("/"))
         }
     }
@@ -51,7 +47,6 @@ export default function AddExpense() {
 
     return (
         <>
-
             <Navbar />
             {error && <div className="flex justify-center my-2">
                 <Alert message={error} />
