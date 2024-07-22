@@ -29,7 +29,7 @@ const Expenses = () => {
   return (
     <>
       <Navbar />
-      <div className='w-full h-full px-5'>
+      <div className='w-full h-full px-4'>
 
         {/* MONTH NAME AND AMOUNT */}
 

@@ -7,9 +7,7 @@ const App = () => {
    return (
       <div className='auth'>
          <AuthContextProvider>
-            <ExpenseContextProvider>
-
-            
+            <ExpenseContextProvider>         
             <Routes />
             </ExpenseContextProvider>
          </AuthContextProvider>

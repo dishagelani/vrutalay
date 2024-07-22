@@ -146,7 +146,7 @@ export const Breakdown = () => {
       <Navbar />
 
       {/* Container */}
-      <div className="w-full h-full px-5 mt-4">
+      <div className="w-full h-full px-4 mt-4">
 
         {/* Back button with amount */}
 
@@ -159,11 +159,11 @@ export const Breakdown = () => {
 
         {/* Tabs */}
 
-        <ul className="my-3 flex list-none flex-row flex-wrap border-b-0 ps-0">
+        <ul className="my-4 flex list-none flex-row flex-wrap border-b-0 ps-0">
           {tabs.map(tab => (
             <li key={tab.id} className="flex-auto text-center cursor-pointer">
               <p
-                className={`my-2 block border-2 p-3 text-xs font-medium uppercase leading-tight hover:isolate hover:border-gradient ${activeTab === tab.id ? 'border-gradient' : 'border-primary'
+                className={`my-2 block border-2 p-2 text-xs font-medium uppercase leading-tight hover:isolate hover:border-gradient ${activeTab === tab.id ? 'border-gradient' : 'border-primary'
                   }`}
                 onClick={() => setActiveTab(tab.id)}
               >

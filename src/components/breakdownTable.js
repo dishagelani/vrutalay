@@ -4,7 +4,7 @@ import moment
 const Table = ({breakdownData}) => {
 
     return (
-        <div className="relative my-5 overflow-x-auto shadow-md sm:rounded-lg ">
+        <div className="relative my-4 overflow-x-auto shadow-md sm:rounded-lg ">
             {breakdownData?.length &&  <table className="w-full text-sm text-left rtl:text-right text-gray-500 ">
 
 <tbody>
