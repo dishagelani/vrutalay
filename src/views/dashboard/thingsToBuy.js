@@ -1,16 +1,27 @@
-import React from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Navbar from "../../components/navbar"
 import { useNavigate } from 'react-router-dom'
+import { TodoContext } from '../../context/toDoContext'
+import Alert from "../../components/alert";
+
 const ThingsToBuy = () => {
 
     const navigate = useNavigate()
 
+    const {error, setError} = useContext(TodoContext)
+
     const handleSubmit = (e) => {
-        e.preventDefault()
+e.preventDefault()
     }
+
+   
     return (
         <>
             <Navbar />
+
+            {error && <div className="flex justify-center my-2">
+                <Alert message={error} />
+            </div>}
 
             {/* Back button with amount */}
 
@@ -61,9 +72,9 @@ const ThingsToBuy = () => {
                             type="text"
                             required
                             placeholder='Sneak in another purchase!'
-                            // value={data?.description}
+                            // value={task}
                             className="block w-full p-2 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                        // onChange={(e) => setData({ ...data, description: e.target.value })}
+                        // onChange={(e) => setTask(e.target.value)}
                         />
 
                         <div className="text-white cursor-pointer shadow-xl p-3 ml-2 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 z-50  " >
