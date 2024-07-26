@@ -118,6 +118,9 @@ const ThingsToBuy = () => {
                     <Alert message={error} />
                 </div>
             )}
+
+            {/* BACK BUTTON  */}
+
             <div className='w-full h-full'>
                 <div className="max-w-full font-semibold text-blueGray-700 my-4 mx-2">
                     <svg
@@ -132,6 +135,9 @@ const ThingsToBuy = () => {
                         <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
                     </svg>
                 </div>
+
+                {/* PRODUCT LISTING */}
+
                 {productList.length === 0 && productsFromIndia.length === 0 ? (
                     <div className="relative h-50vh flex items-center justify-center">
                         <div className="text-center">
@@ -193,6 +199,9 @@ const ThingsToBuy = () => {
                     </>
                 )}
             </div>
+
+
+            {/* ADD A NEW PRODUCT */}
 
             <div className="fixed bottom-0 right-0 w-full">
                 <form onSubmit={handleSubmit}>
