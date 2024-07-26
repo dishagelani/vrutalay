@@ -6,6 +6,13 @@ module.exports = {
       height: {
         '50vh': '50vh',
       },
+      maxHeight : {
+        '25vh' : '25vh'
+      },
+      boxShadow: {
+        'custom': '0 2px 4px rgba(0, 0, 0, 0.2), 0 4px 16px rgba(0, 0, 0, 0.15)',
+      },
+      
     },
   },
   plugins: [

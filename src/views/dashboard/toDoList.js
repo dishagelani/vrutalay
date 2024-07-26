@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, useCallback } from 'react';
 import Navbar from '../../components/navbar';
 import Alert from '../../components/alert';
 import { useNavigate } from 'react-router-dom';
@@ -11,50 +11,50 @@ const ToDoList = () => {
     const [task, setTask] = useState('');
     const [taskList, setTaskList] = useState([]);
     const [completedTaskList, setCompletedTaskList] = useState([]);
-    const [flag, setFlag] = useState(true);
+    const [refreshKey, setRefreshKey] = useState(0);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = useCallback((e) => {
         e.preventDefault();
         addTaskToFirestore(task)
             .then(() => {
-                setFlag(!flag);
+                setRefreshKey(prevKey => prevKey + 1); // Trigger re-fetch
                 setTask('');
             })
             .catch(() => setError('Something went wrong. Please try again!'));
-    };
+    }, [task, addTaskToFirestore, setError]);
 
-    const handleEdit = (id) => {
+    const handleEdit = useCallback((id) => {
         setTaskAsCompleteInFirestore(id)
-            .then(() => setFlag(!flag))
+            .then(() => setRefreshKey(prevKey => prevKey + 1)) // Trigger re-fetch
             .catch(() => setError('Something went wrong. Please try again!'));
-    };
+    }, [setTaskAsCompleteInFirestore, setError]);
 
-    const handleDelete = (id) => {
+    const handleDelete = useCallback((id) => {
         deleteTaskInFirestore(id)
-            .then(() => setFlag(!flag))
+            .then(() => setRefreshKey(prevKey => prevKey + 1)) // Trigger re-fetch
             .catch(() => setError('Something went wrong. Please try again!'));
-    };
+    }, [deleteTaskInFirestore, setError]);
 
     useEffect(() => {
         const fetchTasks = async () => {
-            const documents = await getAllTasksFromFirestore();
-            const completedTasks = [];
-            const tasks = [];
+            try {
+                const documents = await getAllTasksFromFirestore();
+                const completedTasks = [];
+                const tasks = [];
 
-            documents.docs.forEach(doc => {
-                const taskData = { id: doc.id, ...doc.data() };
-                if (taskData.completed) {
-                    completedTasks.push(taskData);
-                } else {
-                    tasks.push(taskData);
-                }
-            });
+                documents.docs.forEach(doc => {
+                    const taskData = { id: doc.id, ...doc.data() };
+                    (taskData.completed ? completedTasks : tasks).push(taskData);
+                });
 
-            setCompletedTaskList(completedTasks);
-            setTaskList(tasks);
+                setCompletedTaskList(completedTasks);
+                setTaskList(tasks);
+            } catch (err) {
+                setError('Failed to fetch tasks. Please try again!');
+            }
         };
         fetchTasks();
-    }, [flag]);
+    }, [refreshKey, getAllTasksFromFirestore, setError]);
 
     useEffect(() => {
         if (error) {
@@ -75,7 +75,6 @@ const ToDoList = () => {
                 </div>
             )}
 
-            {/* BACK BUTTON */}
             <div className="max-w-full font-semibold text-blueGray-700 my-4 mx-2">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -90,7 +89,6 @@ const ToDoList = () => {
                 </svg>
             </div>
 
-            {/* LIST OF INCOMPLETE TASKS */}
             {taskList.length === 0 && completedTaskList.length === 0 && (
                 <div className="relative h-50vh flex items-center justify-center">
                     <div className="text-center">
@@ -101,17 +99,18 @@ const ToDoList = () => {
                     </div>
                 </div>
             )}
+
             {taskList.length > 0 && (
                 <>
                     <p className="m-4 text-sm leading-6 font-bold bg-gradient-to-r from-cyan-500 to-blue-500 text-gradient">
                         Here’s what we need to complete!
                     </p>
-                    <div className="mx-4 overflow-x-auto shadow-md sm:rounded-lg">
+                    <div className="mx-4 max-h-25vh overflow-y scroll shadow-md sm:rounded-lg">
                         <table className="text-sm text-left border-grey-500">
                             <tbody>
                                 {taskList.map(({ task, id }) => (
                                     <tr key={id} className="even:bg-white odd:bg-gray-50">
-                                        <td className="p-3 w-full">{task}</td>
+                                        <td className="p-2 w-full">{task}</td>
                                         <td className="flex py-2">
                                             <svg
                                                 xmlns="http://www.w3.org/2000/svg"
@@ -149,12 +148,12 @@ const ToDoList = () => {
                     <p className="m-4 text-sm leading-6 font-bold bg-gradient-to-r from-cyan-500 to-blue-500 text-gradient">
                         Tasks we've nailed so far!
                     </p>
-                    <div className="mx-4 overflow-x-auto shadow-md sm:rounded-lg">
+                    <div className="mx-4 max-h-25vh overflow-y scroll shadow-md sm:rounded-lg">
                         <table className="text-sm text-left border-grey-500">
                             <tbody>
                                 {completedTaskList.map(({ task, id }) => (
                                     <tr key={id} className="even:bg-white odd:bg-gray-50">
-                                        <td className="p-3 w-full">{task}</td>
+                                        <td className="p-2 w-full">{task}</td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -163,7 +162,6 @@ const ToDoList = () => {
                 </>
             )}
 
-            {/* ADD A NEW TASK */}
             <div className="fixed bottom-0 right-0 w-full">
                 <form onSubmit={handleSubmit}>
                     <div className="flex justify-between p-4">

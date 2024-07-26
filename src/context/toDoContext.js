@@ -1,6 +1,6 @@
 import { createContext, useState } from "react";
 import { database } from "../firebase";
-import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc, getDoc, orderBy } from "firebase/firestore";
+import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc,  orderBy } from "firebase/firestore";
 
 const TodoContext = createContext();
 
@@ -47,12 +47,14 @@ const TodoContextProvider = ({ children }) => {
             setError("Something went wrong. Please try again later !");
         }
     };
-    const addProductToFirestore = async (data) => {
+    const addProductToFirestore = async (product) => {
+
         try {
-            const docRef = await addDoc(collection(database, "Homeware"), {
-                ...data
+            await addDoc(collection(database, "Homeware"), {
+                ...product,priority : false
             });
         } catch (e) {
+            console.log(e.message, "error");
             setError("Something went wrong. Please try again later !");
         }
     };
@@ -65,25 +67,29 @@ const TodoContextProvider = ({ children }) => {
         }
     };
 
-    const setProductAsCompleteInFirestore = async (id) => {
+    const setProductStatusInFirestore = async (id, status) => {
         try {
-            await deleteDoc(doc(database, "Homeware", id));
+
+            console.log(id, status, "Status");
+            const ref = doc(database, "Homeware", id);
+
+            await updateDoc(ref, {
+                fromIndia: status
+            });
+
+            console.log("hey")
         } catch (e) {
+
+            console.log("error", e.message);
             setError("Something went wrong. Please try again later !");
         }
     };
+   
 
 
     const getAllProductsFromFirestore = async () => {
         try {
-            const querySnapshot = await getDocs(collection(database, "Homeware"));
-            const documents = querySnapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data()
-            }));
-
-
-
+            const documents = await getDocs(collection(database, "Homeware"));
             return documents
         } catch (e) {
             setError("Something went wrong. Please try again later !");
@@ -91,7 +97,7 @@ const TodoContextProvider = ({ children }) => {
     };
 
     return (
-        <TodoContext.Provider value={{ addTaskToFirestore, setTaskAsCompleteInFirestore, deleteTaskInFirestore, getAllTasksFromFirestore, getAllProductsFromFirestore, setProductAsCompleteInFirestore, deleteProductInFirestore, addProductToFirestore, error, setError }}>
+        <TodoContext.Provider value={{ addTaskToFirestore, setTaskAsCompleteInFirestore, deleteTaskInFirestore, getAllTasksFromFirestore, getAllProductsFromFirestore, setProductStatusInFirestore, deleteProductInFirestore, addProductToFirestore, error, setError }}>
             {children}
         </TodoContext.Provider>
     );
