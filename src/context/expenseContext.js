@@ -1,6 +1,7 @@
 import { createContext, useState } from "react";
 import { database } from "../firebase";
-import { collection, addDoc, getDocs, updateDoc,deleteDoc, doc, getDoc, orderBy } from "firebase/firestore";
+import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc, getDoc, orderBy, where, query } from "firebase/firestore";
+import moment from "moment";
 
 const ExpenseContext = createContext();
 
@@ -48,26 +49,69 @@ const ExpenseContextProvider = ({ children }) => {
             setError("Something went wrong. Please try again later !");
         }
     };
-    const getAllExpensesFromFirestore = async () => {
+    const getAllExpensesByMonthFromFirestore = async (month, year) => {
         try {
-            const querySnapshot = await getDocs(collection(database, "Expenses"),orderBy("timestamp", "desc"));
-           const documents =  querySnapshot.docs.map(doc => ({
+            const startOfMonth = moment(`${year}-${month}-01`).startOf('month').toDate();
+            const endOfMonth = moment(startOfMonth).endOf('month').toDate();
+            
+            // Query Firestore for documents within the specified date range
+            const q = query(
+                collection(database, "Expenses"),
+                where("date", ">=", startOfMonth),
+                where("date", "<=", endOfMonth),
+                orderBy("date", "desc")
+            );
+            
+            const querySnapshot = await getDocs(q);
+            // const querySnapshot = await getDocs(collection(database, "Expenses"), orderBy("timestamp", "desc"));
+            const documents = querySnapshot.docs.map(doc => ({
                 id: doc.id,
                 ...doc.data()
-              }));
-              
-              setTotalAmount(documents.reduce((accumulator, current) => {
-                  return accumulator + parseFloat(current.amount);
-                }, 0))
+            }));
+
+            setTotalAmount(documents.reduce((accumulator, current) => {
+                return accumulator + parseFloat(current.amount);
+            }, 0))
 
             return documents
         } catch (e) {
             setError("Something went wrong. Please try again later !");
         }
     };
+    const getAllExpensesByYearFromFirestore = async (year) => {
+        try {
+
+            const expensesRef = collection(database, 'Expenses');
+
+            const startOfYear = moment.utc([year]).startOf('year').toDate();
+            const endOfYear = moment.utc([year]).endOf('year').toDate();
+
+            const q = query(
+                expensesRef,
+                where('date', '>=', startOfYear),
+                where('date', '<=', endOfYear)
+            );
+
+            const querySnapshot = await getDocs(q);
+
+            const documents = querySnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+
+            setTotalAmount(documents.reduce((accumulator, current) => {
+                return accumulator + parseFloat(current.amount);
+            }, 0))
+
+            return documents
+        } catch (e) {
+            console.log(e.message, '----error');
+            setError("Something went wrong. Please try again later !");
+        }
+    };
 
     return (
-        <ExpenseContext.Provider value={{ totalAmount, addExpenseToFirestore,editExpenseInFirestore,deleteExpenseInFirestore, getExpenseFromFirestore, getAllExpensesFromFirestore, error, setError }}>
+        <ExpenseContext.Provider value={{ totalAmount, addExpenseToFirestore, editExpenseInFirestore, deleteExpenseInFirestore, getExpenseFromFirestore, getAllExpensesByMonthFromFirestore, getAllExpensesByYearFromFirestore, error, setError }}>
             {children}
         </ExpenseContext.Provider>
     );

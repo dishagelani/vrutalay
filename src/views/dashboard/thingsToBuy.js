@@ -3,9 +3,7 @@ import Navbar from '../../components/navbar';
 import Alert from '../../components/alert';
 import { useNavigate } from 'react-router-dom';
 import { TodoContext } from '../../context/toDoContext';
-
-
-
+import Loader from '../../components/loader';
 
 const ProductItem = ({ name, id, status, onEdit, onDelete, }) => (
     <tr className="even:bg-white odd:bg-gray-50">
@@ -49,8 +47,8 @@ const ThingsToBuy = () => {
     } = useContext(TodoContext);
 
     const [product, setProduct] = useState({ name: '', fromIndia: false });
-    const [productList, setProductList] = useState([]);
-    const [productsFromIndia, setProductsFromIndia] = useState([]);
+    const [productList, setProductList] = useState(null);
+    const [productsFromIndia, setProductsFromIndia] = useState(null);
     const [flag, setFlag] = useState(true);
 
     const handleSubmit = (e) => {
@@ -100,7 +98,7 @@ const ThingsToBuy = () => {
             }
         };
         fetchProducts();
-    }, [flag, getAllProductsFromFirestore, setError]);
+    }, [flag]);
 
     useEffect(() => {
         if (error) {
@@ -118,10 +116,9 @@ const ThingsToBuy = () => {
                     <Alert message={error} />
                 </div>
             )}
-
+            
+            {productList && productsFromIndia ? <> <div className='w-full h-full'>
             {/* BACK BUTTON  */}
-
-            <div className='w-full h-full'>
                 <div className="max-w-full font-semibold text-blueGray-700 my-4 mx-2">
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -260,7 +257,9 @@ const ThingsToBuy = () => {
                         </div>
                     </div>
                 </form>
-            </div>
+            </div></> : <Loader/>}
+
+           
         </>
     );
 };

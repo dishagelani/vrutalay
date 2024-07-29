@@ -1,17 +1,21 @@
 import React, { useContext, useEffect, useState } from 'react'
 import Navbar from '../../components/navbar'
 import moment from 'moment'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import Table from '../../components/breakdownTable'
 import { ExpenseContext } from '../../context/expenseContext'
+import Loader from '../../components/loader'
 
 export const Breakdown = () => {
 
   const navigate = useNavigate()
 
-  const { totalAmount, getAllExpensesFromFirestore } = useContext(ExpenseContext)
+  const location = useLocation()
+
+  const { year, month } = location.state || {}
+
+  const { totalAmount, getAllExpensesByMonthFromFirestore } = useContext(ExpenseContext)
   const [activeTab, setActiveTab] = useState('1')
-  const [expenses, setExpenses] = useState([])
   const [monthlyBreakdownData, setMonthlyBreakdownData] = useState(null)
   const [weeklyBreakdownData, setWeeklyBreakdownData] = useState(null)
 
@@ -20,73 +24,70 @@ export const Breakdown = () => {
     { id: '2', label: 'Weekly' }
   ];
 
-  const getWeeks = () => {
-    const startOfMonth = moment().startOf('month')
-    const endOfMonth = moment()
-    // const endOfMonth = moment().endOf('month')
-
-    let startOfWeek = startOfMonth.clone().startOf("week");
-    let endOfWeek = startOfWeek.clone().endOf("week");
-
-    const weeks = [];
-
-    while (startOfWeek.isBefore(endOfMonth)) {
-      if (endOfWeek.isAfter(startOfMonth) && startOfWeek.isBefore(endOfMonth)) {
-        weeks.push({
-          start: startOfWeek.isBefore(startOfMonth)
-            ? startOfMonth.clone()
-            : startOfWeek.clone(),
-          end: endOfWeek.isAfter(endOfMonth)
-            ? endOfMonth.clone()
-            : endOfWeek.clone(),
-        });
-      }
-      startOfWeek = startOfWeek.add(1, "week");
-      endOfWeek = startOfWeek.clone().endOf("week");
-    }
-    return weeks;
-  };
-
-
   const groupByWeeksAndCategories = (data) => {
-    const weeks = getWeeks();
-    const weeklyData = data.length ? weeks.map(week => ({
-      start: week.start,
-      end: week.end,
-      weeklyData: {}
-    })) : [];
 
-    data.forEach(item => {
-      const date = moment.unix(item.date.seconds);
-      const week = weeklyData.find(week => date.isBetween(week.start, week.end, 'day', '[]'));
+    const weeks = {};
 
-      if (week) {
-        if (!week.weeklyData[item.category]) {
-          week.weeklyData[item.category] = {
-            category: item.category,
-            subcategories: [],
-            totalCategoryAmount: 0
-          };
-        }
+    data.forEach(expense => {
+      const date = moment.unix(expense.date.seconds).add(expense.date.nanoseconds / 1000000000, 'seconds');
+      const startOfMonth = moment(date).startOf('month');
+      const endOfMonth = moment(date).endOf('month');
 
-        week.weeklyData[item.category].subcategories.push({
-          description: item.description,
-          date: item.date,
-          amount: parseFloat(item.amount)
-        });
-
-        week.weeklyData[item.category].totalCategoryAmount += parseFloat(item.amount);
+      // Calculate the week start and end dates within the current month
+      let weekStart = moment(date).startOf('week');
+      if (weekStart.isBefore(startOfMonth)) {
+        weekStart = startOfMonth.clone();
       }
+
+      let weekEnd = moment(date).endOf('week');
+      if (weekEnd.isAfter(endOfMonth)) {
+        weekEnd = endOfMonth.clone();
+      }
+
+      const weekKey = weekStart.format('YYYY-MM-DD');
+      const weekOfMonth = Math.ceil(moment(date).date() / 7);
+
+      if (!weeks[weekKey]) {
+        weeks[weekKey] = {
+          start: weekStart,
+          end: weekEnd,
+          weekOfMonth: weekOfMonth,
+          weeklyData: {},
+        };
+      }
+
+      const week = weeks[weekKey];
+      const category = expense.category;
+
+      if (!week.weeklyData[category]) {
+        week.weeklyData[category] = {
+          category,
+          totalCategoryAmount: 0,
+          subcategories: []
+        };
+      }
+
+      week.weeklyData[category].subcategories.push({
+        description: expense.description,
+        date: expense.date,
+        amount: parseFloat(expense.amount)
+      });
+
+      week.weeklyData[category].totalCategoryAmount += parseFloat(expense.amount);
     });
 
-    return weeklyData.map(week => ({
+    const formattedWeeks = Object.values(weeks).map(week => ({
       start: week.start,
       end: week.end,
+      weekOfMonth: week.weekOfMonth,
       weeklyData: Object.values(week.weeklyData),
       weeklyAmount: Object.values(week.weeklyData).reduce((accumulator, current) => {
         return accumulator + parseFloat(current.totalCategoryAmount);
-      }, 0)
+      }, 0),
     }));
+
+    return formattedWeeks
+
   };
 
   const groupByCategories = (expenses) => {
@@ -125,16 +126,11 @@ export const Breakdown = () => {
   }
 
   useEffect(() => {
-
-    setMonthlyBreakdownData(groupByCategories(expenses))
-    setWeeklyBreakdownData(groupByWeeksAndCategories(expenses))
-
-  }, [expenses])
-
-  useEffect(() => {
     async function getAllExpenses() {
-      const expensesArray = await getAllExpensesFromFirestore()
-      setExpenses(expensesArray)
+      const expenses = await getAllExpensesByMonthFromFirestore(month, year)
+
+      setMonthlyBreakdownData(groupByCategories(expenses))
+      setWeeklyBreakdownData(groupByWeeksAndCategories(expenses))
     }
     getAllExpenses()
 
@@ -145,75 +141,59 @@ export const Breakdown = () => {
     <div>
       <Navbar />
 
-      {/* Container */}
-      <div className="w-full h-full px-4 mt-4">
+      {weeklyBreakdownData ?
+        <div className="w-full h-full px-4 mt-4">
 
-        {/* Back button with amount */}
+          {/* Back button with amount */}
 
-        <div className="relative flex justify-between max-w-full flex-grow flex-1 font-semibold text-blueGray-700">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 cursor-pointer" onClick={() => navigate('/')}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
-          </svg>
-          <p className='bg-gradient-to-r from-cyan-500 to-blue-500 text-gradient font-bold'>${totalAmount}</p>
-        </div>
+          <div className="relative flex justify-between max-w-full flex-grow flex-1 font-semibold text-blueGray-700">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 cursor-pointer" onClick={() => navigate('/')}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+            </svg>
+            <p className='bg-gradient-to-r from-cyan-500 to-blue-500 text-gradient font-bold'>${totalAmount}</p>
+          </div>
 
-        {/* Tabs */}
+          {/* Tabs */}
 
-        <ul className="my-4 flex list-none flex-row flex-wrap border-b-0 ps-0">
-          {tabs.map(tab => (
-            <li key={tab.id} className="flex-auto text-center cursor-pointer">
-              <p
-                className={`my-2 block border-2 p-2 text-xs font-medium uppercase leading-tight hover:isolate hover:border-gradient ${activeTab === tab.id ? 'border-gradient' : 'border-primary'
-                  }`}
-                onClick={() => setActiveTab(tab.id)}
-              >
-                {tab.label}
-              </p>
-            </li>
-          ))}
-        </ul>
+          <ul className="my-4 flex list-none flex-row flex-wrap border-b-0 ps-0">
+            {tabs.map(tab => (
+              <li key={tab.id} className="flex-auto text-center cursor-pointer">
+                <p
+                  className={`my-2 block border-2 p-2 text-xs font-medium uppercase leading-tight hover:isolate hover:border-gradient ${activeTab === tab.id ? 'border-gradient' : 'border-primary'
+                    }`}
+                  onClick={() => setActiveTab(tab.id)}
+                >
+                  {tab.label}
+                </p>
+              </li>
+            ))}
+          </ul>
 
-        {/* table */}
-
-
-        {activeTab == '1' ?
-            monthlyBreakdownData?.length ?
+          {/* table */}
+          {(monthlyBreakdownData.length > 0 && weeklyBreakdownData.length > 0) ?
+            activeTab == '1' ?
               <>
-              <p className="font-semibold">{moment().format('MMMM YYYY')}</p>
-              <Table breakdownData={monthlyBreakdownData} />
-          </>
+                <p className="font-semibold">{month} {year}</p>
+                <Table breakdownData={monthlyBreakdownData} />
+              </>
               :
-              <div className="relative h-50vh flex items-center justify-center">
-                <p className="bg-gradient-to-r from-cyan-500 to-blue-500 text-gradient font-bold text-center" > Your expenses are still on vacation. No entries this month ! </p><span>😋</span>
-              </div>
-        
+              weeklyBreakdownData.reverse().map(weeks =>
+                <>
+                  <div className='flex justify-between font-semibold'>
+                    <p>Week {weeks.weekOfMonth} : {weeks.start.format('DD MMM')} - {weeks.end.format('DD MMM')}</p>
+                    <p>${weeks.weeklyAmount}</p>
+                  </div>
+                  <Table breakdownData={weeks.weeklyData} />
 
-
-          :
-          weeklyBreakdownData.length ? weeklyBreakdownData.map(weeks =>
-            <>
-              <div className='flex justify-between font-semibold'>
-
-                <p>{weeks.start.format('DD MMM')} - {weeks.end.format('DD MMM')}</p>
-                <p>${weeks.weeklyAmount}</p>
-              </div>
-              {weeks.weeklyData.length ?
-                <Table breakdownData={weeks.weeklyData} />
-                :
-                <div className='flex  my-2'>
-                  <p className='mb-2'>Looks like your wallet had a chill week !</p><span>🥱</span>
-                </div>
-
-              }
-
-            </>)
+                </>)
 
             : <div className="relative h-50vh flex items-center justify-center">
               <p className="bg-gradient-to-r from-cyan-500 to-blue-500 text-gradient font-bold text-center" > Your expenses are still on vacation. No entries this month ! </p><span>😋</span>
             </div>
-        }
+          }
 
-      </div>
+        </div> : <Loader />}
+
     </div>
   )
 }

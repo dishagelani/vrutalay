@@ -30,7 +30,7 @@ export default function AddExpense() {
 
     const quotes = ['Money, like emotions, is something you must control to keep your life on the right track !', 'Making money is a happiness. Making other people happy is also a happiness. So why don’t we do both and maximize our happiness?', 'Don’t get so busy making a living that you forget to make a life !', 'Wealth is not his that has it, but his that enjoys it !', 'Money is only a tool. It will take you wherever you wish, but it will not replace you as the driver. It will give you the means for the satisfaction of your desires, but it will not provide you with desires !', 'You must gain control over your money or the lack of it will forever control you !', 'Happiness is not in the mere possession of money; it lies in the joy of achievement, in the thrill of creative effort !']
 
-    const categories = [null, 'Grocery', 'Milk', 'Transportation', 'Laundry', 'Rent','Disha','Udhhav', 'Other']
+    const categories = [null, 'Grocery', 'Milk', 'Transportation', 'Laundry', 'Home essentials','Rent','Disha','Udhhav', 'Other']
 
     const handleSubmit = (e) => {
         e.preventDefault()
