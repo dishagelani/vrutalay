@@ -21,19 +21,19 @@ const ToDoList = () => {
                 setRefreshKey(prevKey => prevKey + 1); // Trigger re-fetch
                 setTask('');
             })
-            .catch(() => setError('Something went wrong. Please try again!'));
+            .catch(() => setError('Yikes! 😕 Something broke. Try again shortly!'));
     }, [task, addTaskToFirestore, setError]);
 
     const handleEdit = useCallback((id) => {
         setTaskAsCompleteInFirestore(id)
             .then(() => setRefreshKey(prevKey => prevKey + 1)) // Trigger re-fetch
-            .catch(() => setError('Something went wrong. Please try again!'));
+            .catch(() => setError('Yikes! 😕 Something broke. Try again shortly!'));
     }, [setTaskAsCompleteInFirestore, setError]);
 
     const handleDelete = useCallback((id) => {
         deleteTaskInFirestore(id)
             .then(() => setRefreshKey(prevKey => prevKey + 1)) // Trigger re-fetch
-            .catch(() => setError('Something went wrong. Please try again!'));
+            .catch(() => setError('Yikes! 😕 Something broke. Try again shortly!'));
     }, [deleteTaskInFirestore, setError]);
 
     useEffect(() => {

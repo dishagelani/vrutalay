@@ -12,34 +12,12 @@ const AuthContextProvider = ({ children }) => {
     const [error, setError] = useState(null)
     const provider = new GoogleAuthProvider();
 
-    const loginWithEmailAndPassword = async (email, password) => {
-        try {
-            const userCredential = await signInWithEmailAndPassword(auth, email, password)
-            if (!userCredential) {
-                alert("You are not authorized to access the applicatioin !")
-            }
-        } catch (error) {
-            switch (error.code) {
-                case 'auth/email-already-in-use':
-                    setError('Email already in use !')
-                    break;
-                case 'auth/invalid-credential':
-                    setError('You are not authorized to use the application !')
-                    break;
-                case 'auth/invalid-password':
-                    setError('Invalid password !')
-                    break;
-                default: setError("Something went wrong. Please try again later !")
-            }
-        }
-
-    }
 
     const googleLogIn = async () => {
 
         const result = await signInWithPopup(auth, provider)
         if (!result) {
-            alert("Something went wrong. Please try agian later !");
+            setError("Yikes! 😕 Something broke. Try again shortly!");
             return
         }
         const { accessToken, email } = result.user
@@ -56,7 +34,7 @@ const AuthContextProvider = ({ children }) => {
         if (userFound) {
             localStorage.setItem('token', accessToken)
         } else {
-            setError('You are not authorized to use the application !')
+            setError("Stop right there! 🛑 This app’s a VIP club and you’re not quite on the list. Try again in a bit and maybe you’ll get a golden ticket! ")
         }
     }
 
@@ -76,7 +54,7 @@ const AuthContextProvider = ({ children }) => {
    
 
     return (
-        <AuthContext.Provider value={{ user, error, setError, googleLogIn, logOut, loginWithEmailAndPassword }}>
+        <AuthContext.Provider value={{ user, error, setError, googleLogIn, logOut }}>
             {children}
         </AuthContext.Provider>
     )

@@ -16,7 +16,7 @@ const ExpenseContextProvider = ({ children }) => {
             });
             console.log(docRef, "Added doc");
         } catch (e) {
-            setError("Something went wrong. Please try again later !");
+            setError("Yikes! 😕 Something broke. Try again shortly!");
         }
     };
     const editExpenseInFirestore = async (data) => {
@@ -27,14 +27,14 @@ const ExpenseContextProvider = ({ children }) => {
                 ...data
             });
         } catch (e) {
-            setError("Something went wrong. Please try again later !");
+            setError("Yikes! 😕 Something broke. Try again shortly!");
         }
     };
     const deleteExpenseInFirestore = async (id) => {
         try {
             await deleteDoc(doc(database, "Expenses", id));
         } catch (e) {
-            setError("Something went wrong. Please try again later !");
+            setError("Yikes! 😕 Something broke. Try again shortly!");
         }
     };
 
@@ -46,7 +46,7 @@ const ExpenseContextProvider = ({ children }) => {
             return docSnap.data()
 
         } catch (e) {
-            setError("Something went wrong. Please try again later !");
+            setError("Yikes! 😕 Something broke. Try again shortly!");
         }
     };
     const getAllExpensesByMonthFromFirestore = async (month, year) => {
@@ -75,7 +75,7 @@ const ExpenseContextProvider = ({ children }) => {
 
             return documents
         } catch (e) {
-            setError("Something went wrong. Please try again later !");
+            setError("Yikes! 😕 Something broke. Try again shortly!");
         }
     };
     const getAllExpensesByYearFromFirestore = async (year) => {
@@ -106,7 +106,7 @@ const ExpenseContextProvider = ({ children }) => {
             return documents
         } catch (e) {
             console.log(e.message, '----error');
-            setError("Something went wrong. Please try again later !");
+            setError("Yikes! 😕 Something broke. Try again shortly!");
         }
     };
 

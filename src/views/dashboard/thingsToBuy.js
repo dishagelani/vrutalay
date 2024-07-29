@@ -58,20 +58,20 @@ const ThingsToBuy = () => {
                 setFlag(prevFlag => !prevFlag);
                 setProduct({ name: '', fromIndia: false });
             })
-            .catch(() => setError('Something went wrong. Please try again!'));
+            .catch(() => setError('Yikes! 😕 Something broke. Try again shortly!'));
     };
 
     const handleEdit = (id, status) => {
         setProductStatusInFirestore(id, status)
             .then(() => setFlag(prevFlag => !prevFlag))
-            .catch(() => setError('Something went wrong. Please try again!'));
+            .catch(() => setError('Yikes! 😕 Something broke. Try again shortly!'));
     };
 
 
     const handleDelete = (id) => {
         deleteProductInFirestore(id)
             .then(() => setFlag(prevFlag => !prevFlag))
-            .catch(() => setError('Something went wrong. Please try again!'));
+            .catch(() => setError('Yikes! 😕 Something broke. Try again shortly!'));
     };
 
     useEffect(() => {

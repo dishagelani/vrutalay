@@ -12,7 +12,7 @@ const Table = ({ expenses,  setFlag, fetchData }) => {
     const handleDelete =  (id) => {
         try {
             deleteExpenseInFirestore(id).then(() => setFlag(!fetchData))
-        } catch (e) { setError('Something went wrong ! Plese try again later !') }
+        } catch (e) { setError('Yikes! 😕 Something broke. Try again shortly!') }
     }
 
     useEffect(() => {
