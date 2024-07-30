@@ -8,7 +8,7 @@ module.exports = {
       },
       maxHeight : {
         '25vh' : '25vh',
-        '50vh' : '50vh'
+        
       },
       boxShadow: {
         'custom': '0 2px 4px rgba(0, 0, 0, 0.2), 0 4px 16px rgba(0, 0, 0, 0.15)',

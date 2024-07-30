@@ -26,13 +26,13 @@ const Table = ({ expenses,  setFlag, fetchData }) => {
         </div>
     }
 
-    <div className="max-h-50vh overflow-y scroll shadow-md sm:rounded-lg">
+    <div className="sm:rounded-lg">
         <table className="w-full text-sm text-left">
             <thead className="text-xs uppercase bg-gray-50">
                 <tr>
                     {titles.map((title) => (
-                        <th scope="col" className="p-2" key={title}>
-                            {title}
+                        <th scope="col" className="p-2 " key={title}>
+                            {title} 
                         </th>
                     ))}
                 </tr>
@@ -43,7 +43,7 @@ const Table = ({ expenses,  setFlag, fetchData }) => {
                         {moment(expense.date.seconds * 1000 + Math.floor(expense.date.nanoseconds / 1000000)).format('DD MMM')}
                     </td>
                     <td className="p-2">
-                        $ {expense.amount}
+                        ${expense.amount}
                     </td>
                     <td className="p-2 whitespace-normal ">
                         {expense.description}

@@ -66,7 +66,6 @@ const ToDoList = () => {
         }
     }, [error, setError]);
 
-    console.log("TaskList", taskList);
 
     return (
         <>

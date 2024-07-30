@@ -22,7 +22,7 @@ const Table = ({breakdownData}) => {
                     {subcategories.map(({description, date, amount}) => 
                     <tr className='divide-x divide-gray-200  whitespace-nowrap text-sm text-gray-800 '>
                         <td className='w-12 p-1 text-center'> {moment(date.seconds * 1000 + Math.floor(date.nanoseconds / 1000000)).format('DD MMM')}</td>
-                        <td className='w-10 p-1 text-center'>${amount}</td>
+                        <td className='w-8 p-1 text-center'>${amount}</td>
                         <td className='p-1'>{description}</td>
                     </tr>
                   )}

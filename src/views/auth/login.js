@@ -12,7 +12,7 @@ export default function Login() {
  
 
   const signInWithGoogle = async () => {
-    await googleLogIn().then(() => { navigte("/") })
+    await googleLogIn().then(() => { navigte("/") }).catch(e => console.log("Login error : " , e))
   }
 
   useEffect(() => {
