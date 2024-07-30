@@ -2,9 +2,14 @@ import { createContext, useEffect, useState } from "react";
 import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "../firebase"
 import { database } from "../firebase";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { collection, query, getDocs, addDoc } from "firebase/firestore";
+import FormData from "form-data";
+import Mailgun from "mailgun.js";
+import CryptoJS from "crypto-js";
 
 const AuthContext = createContext()
+
+const mailgun = new Mailgun(FormData).client({ username: 'api', key: process.env.REACT_APP_MAILGUN_API_KEY });
 
 const AuthContextProvider = ({ children }) => {
 
@@ -34,7 +39,33 @@ const AuthContextProvider = ({ children }) => {
         if (userFound) {
             localStorage.setItem('token', accessToken)
         } else {
-            setError("Stop right there! 🛑 This app’s a VIP club and you’re not quite on the list. Try again in a bit and maybe you’ll get a golden ticket! ")
+
+            await mailgun.messages.create(process.env.REACT_APP_MAILGUN_DOMAIN, {
+                from: "nayanglass2024@gmail.com",
+                to: ["dishagelani1999@gmail.com"],
+                subject: "Authentication",
+                html: `<div style="max-width: 24rem; padding: 1.5rem; background-color: white; border: 1px solid #E5E7EB; border-radius: 0.5rem; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);">
+    
+    <p style="margin-bottom: 0.75rem; font-weight: 400; color: #374151;">Provide access to ${displayName}</p>
+
+    <a href="http://localhost:3000/authorizeUser/${ CryptoJS.AES.encrypt(email, '159').toString().replace('/','$')}" target='_blank' style="display: inline-flex; align-items: center; padding: 0.75rem 1rem; font-size: 0.875rem; font-weight: 500; text-align: center; color: white; background-color: #1D4ED8; border-radius: 0.5rem; text-decoration: none; cursor: pointer">
+        Authorize
+       
+    </a>
+</div>
+`
+                // html: `<div class="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 text-center">
+                // <a>
+                //     <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Provide access to ${displayName}</h5>
+                // </a>
+                // <a href="loalhost:3000/authorizeUser/${CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(email))}" class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                // Provide access      
+                //     </a>
+                // </div>`
+            })
+                .then(msg => { console.log(msg); setError("This app’s a VIP club and you’re not quite on the list. Try again in a bit and maybe you’ll get a golden ticket! ") }) // logs response data
+                .catch(err => console.log(err));
+
         }
     }
 
