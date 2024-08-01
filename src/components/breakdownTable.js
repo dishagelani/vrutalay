@@ -12,7 +12,8 @@ const Table = ({breakdownData}) => {
     <tr className="even:bg-white  odd:bg-gray-50 border-b  divide-x divide-gray-200">
         <th scope="row" className="py-2 font-medium text-gray-900 whitespace-nowrap text-center">
             <p>{category}</p>
-            <p>${totalCategoryAmount}</p>
+            <p>${
+            totalCategoryAmount.toString().split('.')[1]?.length > 2 ? parseFloat(totalCategoryAmount).toFixed(2) : totalCategoryAmount}</p>
         </th>
 
         <td >

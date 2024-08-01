@@ -94,7 +94,7 @@ const AnnualReport = () => {
           <h5 className="font-bold tracking-tight text-gray-900">{month} {currentYear}</h5>
           <p className="font-semibold text-gray-700">${amount}</p>
           </div>
-          <span>{amount >= 2400 ? 'Busted 🥶' : amount > 2200 ? 'Almost-there 😥' : 'On-track 😃'}</span>
+          <span>{amount >= 2500 ? 'Busted 🥶' : amount > 2200 ? 'Almost-there 😥' : 'On-track 😃'}</span>
         </div>)}
     </div>
     : <div className="relative h-50vh flex items-center justify-center">

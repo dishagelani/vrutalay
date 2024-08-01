@@ -40,10 +40,10 @@ const Expenses = () => {
           <div className="rounded-t mb-0 py-4 border-0">
             <div className="relative flex justify-between max-w-full flex-grow flex-1 font-semibold text-blueGray-700">
               <p className="month">{currentMonth} {moment().year()}</p>
-              <p>${totalAmount}</p>
+              <p>${totalAmount} <span>{totalAmount >= 2500 ? '🥶' : totalAmount > 2200 ? '😥' : '😃'}</span></p>
             </div>
             <div className="relative w-full max-w-full flex-grow flex-1 text-right">
-              <p className="bg-gradient-to-r from-cyan-500 to-blue-500 text-gradient text-xs font-bold cursor-pointer" onClick={() => navigate("/breakdown", { state: { month: 'July', year: 2024 } })} >View breakdown</p>
+              <p className="bg-gradient-to-r from-cyan-500 to-blue-500 text-gradient text-xs font-bold cursor-pointer" onClick={() => navigate("/breakdown", { state: { month: currentMonth, year: moment().year() } })} >View breakdown</p>
             </div>
           </div>
 
