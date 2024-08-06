@@ -21,19 +21,19 @@ const ToDoList = () => {
                 setRefreshKey(prevKey => prevKey + 1); // Trigger re-fetch
                 setTask('');
             })
-            .catch(() => setError('Yikes! 😕 Something broke. Try again shortly!'));
+            .catch(() => setError('Yikes! Something broke. Try again shortly!'));
     }, [task, addTaskToFirestore, setError]);
 
     const handleEdit = useCallback((id) => {
         setTaskAsCompleteInFirestore(id)
             .then(() => setRefreshKey(prevKey => prevKey + 1)) // Trigger re-fetch
-            .catch(() => setError('Yikes! 😕 Something broke. Try again shortly!'));
+            .catch(() => setError('Yikes! Something broke. Try again shortly!'));
     }, [setTaskAsCompleteInFirestore, setError]);
 
     const handleDelete = useCallback((id) => {
         deleteTaskInFirestore(id)
             .then(() => setRefreshKey(prevKey => prevKey + 1)) // Trigger re-fetch
-            .catch(() => setError('Yikes! 😕 Something broke. Try again shortly!'));
+            .catch(() => setError('Yikes! Something broke. Try again shortly!'));
     }, [deleteTaskInFirestore, setError]);
 
     useEffect(() => {
@@ -106,7 +106,7 @@ const ToDoList = () => {
                         <p className="m-4 text-sm leading-6 font-bold bg-gradient-to-r from-cyan-500 to-blue-500 text-gradient">
                             Here’s what we need to complete!
                         </p>
-                        <div className="mx-4 max-h-25vh overflow-y scroll shadow-md sm:rounded-lg">
+                        <div className="mx-4 overflow-y-scroll shadow-md sm:rounded-lg max-h-25vh">
                             <table className="text-sm text-left border-grey-500">
                                 <tbody>
                                     {taskList.map(({ task, id }) => (
@@ -149,7 +149,7 @@ const ToDoList = () => {
                         <p className="m-4 text-sm leading-6 font-bold bg-gradient-to-r from-cyan-500 to-blue-500 text-gradient">
                             Tasks we've nailed so far!
                         </p>
-                        <div className="mx-4 max-h-25vh overflow-y scroll shadow-md sm:rounded-lg">
+                        <div className="mx-4 overflow-y-scroll shadow-md sm:rounded-lg max-h-25vh">
                             <table className="text-sm text-left border-grey-500">
                                 <tbody>
                                     {completedTaskList.map(({ task, id }) => (

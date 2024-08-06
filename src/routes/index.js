@@ -13,6 +13,7 @@ import AddExpense from "../views/dashboard/addExpense";
 import AnnualReport from "../views/dashboard/annualReport";
 import ToDoList from "../views/dashboard/toDoList";
 import ThingsToBuy from "../views/dashboard/thingsToBuy";
+import Comparision from "../views/dashboard/comparision";
   const router = createBrowserRouter(
     
     createRoutesFromElements(
@@ -24,6 +25,7 @@ import ThingsToBuy from "../views/dashboard/thingsToBuy";
            <Route path="/add-expense" element={  <AddExpense />} />
            <Route path="/edit-expense" element={  <AddExpense />} />
            <Route path="/annual-report" element={  <AnnualReport />} />
+           <Route path="/view-comparision" element={  <Comparision />} />
            <Route path="/to-do-list" element={  <ToDoList />} />
            <Route path="/things-to-buy" element={  <ThingsToBuy />} />
       </Route>

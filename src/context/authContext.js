@@ -17,7 +17,7 @@ const AuthContextProvider = ({ children }) => {
 
         const result = await signInWithPopup(auth, provider)
         if (!result) {
-            setError("Yikes! 😕 Something broke. Try again shortly!");
+            setError("Yikes! Something broke. Try again shortly!");
             return
         }
         const { accessToken, email, displayName } = result.user
@@ -34,7 +34,7 @@ const AuthContextProvider = ({ children }) => {
         if (userFound) {
             localStorage.setItem('token', accessToken)
         } else {
-            setError("This app’s a VIP club and you’re not quite on the list. Try again in a bit and maybe you’ll get a golden ticket! ")
+            setError("This app’s a VIP club and you’re not quite on the list! ")
         }
     }
 

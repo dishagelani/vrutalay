@@ -14,7 +14,7 @@ const TodoContextProvider = ({ children }) => {
                 completed: false
             });
         } catch (e) {
-            setError("Yikes! 😕 Something broke. Try again shortly!");
+            setError("Yikes! Something broke. Try again shortly!");
         }
     };
 
@@ -22,7 +22,7 @@ const TodoContextProvider = ({ children }) => {
         try {
             await deleteDoc(doc(database, "Tasks", id));
         } catch (e) {
-            setError("Yikes! 😕 Something broke. Try again shortly!");
+            setError("Yikes! Something broke. Try again shortly!");
         }
     };
 
@@ -34,7 +34,7 @@ const TodoContextProvider = ({ children }) => {
                 completed: true
             });
         } catch (e) {
-            setError("Yikes! 😕 Something broke. Try again shortly!");
+            setError("Yikes! Something broke. Try again shortly!");
         }
     };
 
@@ -44,18 +44,18 @@ const TodoContextProvider = ({ children }) => {
             const querySnapshot = await getDocs(collection(database, "Tasks"));
             return querySnapshot
         } catch (e) {
-            setError("Yikes! 😕 Something broke. Try again shortly!");
+            setError("Yikes! Something broke. Try again shortly!");
         }
     };
     const addProductToFirestore = async (product) => {
 
         try {
             await addDoc(collection(database, "Homeware"), {
-                ...product,priority : false
+                ...product
             });
         } catch (e) {
             console.log(e.message, "error");
-            setError("Yikes! 😕 Something broke. Try again shortly!");
+            setError("Yikes! Something broke. Try again shortly!");
         }
     };
 
@@ -63,7 +63,7 @@ const TodoContextProvider = ({ children }) => {
         try {
             await deleteDoc(doc(database, "Homeware", id));
         } catch (e) {
-            setError("Yikes! 😕 Something broke. Try again shortly!");
+            setError("Yikes! Something broke. Try again shortly!");
         }
     };
 
@@ -81,7 +81,7 @@ const TodoContextProvider = ({ children }) => {
         } catch (e) {
 
             console.log("error", e.message);
-            setError("Yikes! 😕 Something broke. Try again shortly!");
+            setError("Yikes! Something broke. Try again shortly!");
         }
     };
    
@@ -92,7 +92,7 @@ const TodoContextProvider = ({ children }) => {
             const documents = await getDocs(collection(database, "Homeware"));
             return documents
         } catch (e) {
-            setError("Yikes! 😕 Something broke. Try again shortly!");
+            setError("Yikes! Something broke. Try again shortly!");
         }
     };
 
