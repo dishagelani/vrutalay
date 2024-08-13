@@ -76,7 +76,9 @@ const ToDoList = () => {
                     <Alert message={error} />
                 </div>
             )}
-            {taskList && completedTaskList ? <>    <div className="max-w-full font-semibold text-blueGray-700 my-4 mx-2">
+            {taskList && completedTaskList ? <>   
+            {/* Back button  */}
+             <div className="max-w-full font-semibold text-blueGray-700 mt-4 mx-2">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
@@ -89,6 +91,7 @@ const ToDoList = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
                 </svg>
             </div>
+            {/* List of tasks */}
 
                 {(taskList.length === 0 && completedTaskList.length === 0) && (
                     <div className="relative h-50vh flex items-center justify-center">
@@ -100,13 +103,15 @@ const ToDoList = () => {
                         </div>
                     </div>
                 )}
+                <div className='max-h-[calc(100vh-150px)] overflow-auto'>
 
+               
                 {taskList.length > 0 && (
                     <>
                         <p className="m-4 text-sm leading-6 font-bold bg-gradient-to-r from-cyan-500 to-blue-500 text-gradient">
                             Here’s what we need to complete!
                         </p>
-                        <div className="mx-4 overflow-y-scroll shadow-md sm:rounded-lg max-h-25vh">
+                        <div className="mx-4 shadow-md sm:rounded-lg ">
                             <table className="text-sm text-left border-grey-500">
                                 <tbody>
                                     {taskList.map(({ task, id }) => (
@@ -149,7 +154,7 @@ const ToDoList = () => {
                         <p className="m-4 text-sm leading-6 font-bold bg-gradient-to-r from-cyan-500 to-blue-500 text-gradient">
                             Tasks we've nailed so far!
                         </p>
-                        <div className="mx-4 overflow-y-scroll shadow-md sm:rounded-lg max-h-25vh">
+                        <div className="mx-4 shadow-md sm:rounded-lg ">
                             <table className="text-sm text-left border-grey-500">
                                 <tbody>
                                     {completedTaskList.map(({ task, id }) => (
@@ -162,7 +167,8 @@ const ToDoList = () => {
                         </div>
                     </>
                 )}
-
+                 </div>
+                {/* Adding new task  */}
                 <div className="fixed bottom-0 right-0 w-full">
                     <form onSubmit={handleSubmit}>
                         <div className="flex justify-between p-4">

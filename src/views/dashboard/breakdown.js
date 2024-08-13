@@ -92,11 +92,9 @@ export const Breakdown = () => {
 
   const groupByCategories = (expenses) => {
     const breakdownByMonth = expenses?.reduce((acc, item) => {
-      // Find if the category already exists in the accumulator
       const categoryIndex = acc.findIndex((obj) => obj.category === item.category);
 
       if (categoryIndex > -1) {
-        // Category exists, add the subcategory item and update the total amount
         acc[categoryIndex].subcategories.push({
           description: item.description,
           amount: item.amount,
@@ -104,7 +102,6 @@ export const Breakdown = () => {
         });
         acc[categoryIndex].totalCategoryAmount += parseFloat(item.amount);
       } else {
-        // Category does not exist, create a new category entry
         acc.push({
           category: item.category,
           subcategories: [

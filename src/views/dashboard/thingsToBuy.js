@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, useRef } from 'react';
 import Navbar from '../../components/navbar';
 import Alert from '../../components/alert';
 import { useNavigate } from 'react-router-dom';
@@ -6,7 +6,7 @@ import { TodoContext } from '../../context/toDoContext';
 import Loader from '../../components/loader';
 
 const ProductItem = ({ name, id, status, onEdit, onDelete, }) => (
-    <tr className="even:bg-white odd:bg-gray-50">
+    <tr className="even:bg-white odd:bg-gray-50" draggable>
         <td className="p-2 w-full">{name}</td>
         <td className="flex py-2">
             <svg
@@ -45,11 +45,18 @@ const ThingsToBuy = () => {
         error,
         setError
     } = useContext(TodoContext);
+    const dragItem = useRef()
+    const dragOverItem = useRef()
 
     const [product, setProduct] = useState({ name: '', fromIndia: false });
     const [productList, setProductList] = useState(null);
     const [productsFromIndia, setProductsFromIndia] = useState(null);
     const [flag, setFlag] = useState(true);
+    const [activeTab, setActiveTab] = useState(1);
+    const tabs = [
+        { id: 1, d : "M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" },
+        { id: 2,d:"M15 8.25H9m6 3H9m3 6-3-3h1.5a3 3 0 1 0 0-6M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" }
+      ];
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -132,6 +139,28 @@ const ThingsToBuy = () => {
                         <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
                     </svg>
                 </div>
+                <ul className="mx-4 flex list-none flex-row flex-wrap border-b-0 ps-0">
+            {tabs.map(tab => (
+              <li key={tab.id} className="flex-auto  cursor-pointer">
+                <div
+                  className={`flex justify-center border-2 p-2 hover:isolate hover:border-gradient ${activeTab === tab.id ? 'border-gradient' : 'border-primary'
+                    }`}
+                  onClick={() => setActiveTab(tab.id)}
+                >
+                    <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="size-5 cursor-pointer mx-1"
+            >
+                 <path strokeLinecap="round" strokeLinejoin="round" d={tab.d}/> 
+            </svg>
+                </div>
+              </li>
+            ))}
+          </ul>
 
                 {/* PRODUCT LISTING */}
 
@@ -146,12 +175,12 @@ const ThingsToBuy = () => {
                     </div>
                 ) : (
                     <>
-                        {productList.length > 0 && (
+                        {activeTab == 1 && (
                             <>
                                 <p className="m-4 text-sm leading-6 font-bold bg-gradient-to-r from-cyan-500 to-blue-500 text-gradient">
                                     House wants vs. wallet’s screams!
                                 </p>
-                                <div className="mx-4 overflow-y-scroll shadow-md sm:rounded-lg max-h-25vh">
+                                <div className="mx-4 max-h-[calc(100vh-300px)] overflow-auto shadow-md sm:rounded-lg">
                                     <table className="text-sm text-left border-grey-500">
                                         <tbody >
                                             {productList.map(product => (
@@ -170,12 +199,12 @@ const ThingsToBuy = () => {
                             </>
                         )}
 
-                        {productsFromIndia.length > 0 && (
+                        {activeTab == 2 && (
                             <>
                                 <p className="m-4 text-sm leading-6 font-bold bg-gradient-to-r from-cyan-500 to-blue-500 text-gradient">
                                     Essentials we're ordering from our hometown!
                                 </p>
-                                <div className="mx-4 overflow-y-scroll shadow-md sm:rounded-lg max-h-25vh">
+                                <div className="mx-4 max-h-[calc(100vh-300px)] overflow-auto shadow-md sm:rounded-lg ">
                                     <table className="text-sm text-left border-grey-500">
                                         <tbody >
                                             {productsFromIndia.map(product => (
