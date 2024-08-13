@@ -1,6 +1,6 @@
 import { createContext, useState } from "react";
 import { database } from "../firebase";
-import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc,  orderBy } from "firebase/firestore";
+import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc,  query, where } from "firebase/firestore";
 
 const TodoContext = createContext();
 
@@ -21,6 +21,26 @@ const TodoContextProvider = ({ children }) => {
     const deleteTaskInFirestore = async (id) => {
         try {
             await deleteDoc(doc(database, "Tasks", id));
+        } catch (e) {
+            setError("Yikes! Something broke. Try again shortly!");
+        }
+    };
+    const deleteCompletedTaskInFirestore = async (id) => {
+        try {
+            const q = query(collection(database, 'Tasks'), where('completed', '==', true));
+
+            // Get documents matching the query
+            const querySnapshot = await getDocs(q);
+        
+            // Delete each document
+            const deletePromises = querySnapshot.docs.map(docSnap => {
+              const docRef = doc(database, 'Tasks', docSnap.id);
+              return deleteDoc(docRef);
+            });
+        
+            // Wait for all deletions to complete
+            await Promise.all(deletePromises);
+        
         } catch (e) {
             setError("Yikes! Something broke. Try again shortly!");
         }
@@ -97,7 +117,7 @@ const TodoContextProvider = ({ children }) => {
     };
 
     return (
-        <TodoContext.Provider value={{ addTaskToFirestore, setTaskAsCompleteInFirestore, deleteTaskInFirestore, getAllTasksFromFirestore, getAllProductsFromFirestore, setProductStatusInFirestore, deleteProductInFirestore, addProductToFirestore, error, setError }}>
+        <TodoContext.Provider value={{ addTaskToFirestore, setTaskAsCompleteInFirestore, deleteTaskInFirestore, deleteCompletedTaskInFirestore,getAllTasksFromFirestore, getAllProductsFromFirestore, setProductStatusInFirestore, deleteProductInFirestore, addProductToFirestore, error, setError }}>
             {children}
         </TodoContext.Provider>
     );
