@@ -105,7 +105,6 @@ const ExpenseContextProvider = ({ children }) => {
 
             return documents
         } catch (e) {
-            console.log(e.message, '----error');
             setError("Yikes! Something broke. Try again shortly!");
         }
     };

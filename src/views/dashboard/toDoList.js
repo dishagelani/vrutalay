@@ -54,8 +54,8 @@ const ToDoList = () => {
                     (taskData.completed ? completedTasks : tasks).push(taskData);
                 });
 
-                setCompletedTaskList(completedTasks);
-                setTaskList(tasks);
+                setCompletedTaskList({length : completedTasks.length, data : completedTasks});
+                setTaskList({length : tasks.length, data : tasks});
             } catch (err) {
                 setError('Failed to fetch tasks. Please try again!');
             }
@@ -119,7 +119,7 @@ const ToDoList = () => {
                             <div className="mx-4 shadow-md sm:rounded-lg ">
                                 <table className="text-sm text-left border-grey-500">
                                     <tbody>
-                                        {taskList.map(({ task, id }) => (
+                                        {taskList.data.map(({ task, id }) => (
                                             <tr key={id} className="even:bg-white odd:bg-gray-50">
                                                 <td className="p-2 w-full">{task}</td>
                                                 <td className="flex py-2">
@@ -165,12 +165,13 @@ const ToDoList = () => {
                             </svg>
 
                         </div>
-                            <div className="mx-4 shadow-md sm:rounded-lg ">
-                                <table className="text-sm text-left border-grey-500">
+                            <div className="mx-4 shadow-md ">
+                                <table className="relative w-full text-sm text-left border-grey-500">
                                     <tbody>
-                                        {completedTaskList.map(({ task, id }) => (
+                                        {completedTaskList.data.map(({ task, id }) => (
                                             <tr key={id} className="even:bg-white odd:bg-gray-50">
                                                 <td className="p-2 w-full">{task}</td>
+                                                
                                             </tr>
                                         ))}
                                     </tbody>

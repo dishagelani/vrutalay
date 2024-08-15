@@ -58,7 +58,6 @@ const Comparision = () => {
             }
 
             const result = categorizeAndGroupData(report);
-            console.log("result", result);
 
             setChartData(result)
         }

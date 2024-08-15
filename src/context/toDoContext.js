@@ -1,6 +1,6 @@
 import { createContext, useState } from "react";
 import { database } from "../firebase";
-import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc,  query, where } from "firebase/firestore";
+import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc,  query, where, orderBy } from "firebase/firestore";
 
 const TodoContext = createContext();
 
@@ -68,13 +68,12 @@ const TodoContextProvider = ({ children }) => {
         }
     };
     const addProductToFirestore = async (product) => {
-
+        
         try {
             await addDoc(collection(database, "Homeware"), {
                 ...product
             });
         } catch (e) {
-            console.log(e.message, "error");
             setError("Yikes! Something broke. Try again shortly!");
         }
     };
@@ -89,27 +88,38 @@ const TodoContextProvider = ({ children }) => {
 
     const setProductStatusInFirestore = async (id, status) => {
         try {
-
-            console.log(id, status, "Status");
             const ref = doc(database, "Homeware", id);
 
             await updateDoc(ref, {
                 fromIndia: status
             });
 
-            console.log("hey")
         } catch (e) {
 
-            console.log("error", e.message);
             setError("Yikes! Something broke. Try again shortly!");
         }
     };
    
+    const updateIndexOfProductsInFirestore = async (finalIndex) => {
+        finalIndex.forEach(async ({ id, index }) => {
+            try {
+                const ref = doc(database, "Homeware", id);
 
-
+                await updateDoc(ref, {
+                    index: index
+                });;
+            } catch (error) {
+              console.error(`Error updating document with ID ${id}:`, error);
+            }
+          });
+    }
     const getAllProductsFromFirestore = async () => {
         try {
-            const documents = await getDocs(collection(database, "Homeware"));
+            const documents = await getDocs(query(
+                collection(database, "Homeware"),
+              
+                orderBy('index', 'asc') )
+            ); 
             return documents
         } catch (e) {
             setError("Yikes! Something broke. Try again shortly!");
@@ -117,7 +127,7 @@ const TodoContextProvider = ({ children }) => {
     };
 
     return (
-        <TodoContext.Provider value={{ addTaskToFirestore, setTaskAsCompleteInFirestore, deleteTaskInFirestore, deleteCompletedTaskInFirestore,getAllTasksFromFirestore, getAllProductsFromFirestore, setProductStatusInFirestore, deleteProductInFirestore, addProductToFirestore, error, setError }}>
+        <TodoContext.Provider value={{ addTaskToFirestore, setTaskAsCompleteInFirestore, deleteTaskInFirestore, deleteCompletedTaskInFirestore,getAllTasksFromFirestore, getAllProductsFromFirestore, setProductStatusInFirestore, updateIndexOfProductsInFirestore, deleteProductInFirestore, addProductToFirestore, error, setError }}>
             {children}
         </TodoContext.Provider>
     );
