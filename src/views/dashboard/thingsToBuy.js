@@ -1,40 +1,74 @@
-import { useState, useEffect, useContext, useRef } from 'react';
+import { useState, useEffect, useContext, useCallback } from 'react';
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import Navbar from '../../components/navbar';
 import Alert from '../../components/alert';
 import { useNavigate } from 'react-router-dom';
 import { TodoContext } from '../../context/toDoContext';
 import Loader from '../../components/loader';
 
-const ProductItem = ({ name, id, status, onEdit, onDelete, dragStart, dragEnd, drop, index, draggingItem }) => (
-    <tr className={`item ${index === draggingItem ? 'dragging' : ''} even:bg-white odd:bg-gray-50`} draggable onDragStart={(e) => dragStart(e, index)} onDragEnd={(e) => dragEnd(e, index)} onDragOver={(e) => e.preventDefault()}
-        onDrop={(e) => drop(e, index)} >
-        <td className="p-2 w-full">{name}</td>
-        <td className="flex py-2">
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="size-5 cursor-pointer mx-1"
-                onClick={() => onEdit(id, status)}
-            >
-                {status ? <path strokeLinecap="round" strokeLinejoin="round" d="M15 8.25H9m6 3H9m3 6-3-3h1.5a3 3 0 1 0 0-6M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /> : <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />}
-            </svg>
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="size-5 cursor-pointer mx-1"
-                onClick={() => onDelete(id)}
-            >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-            </svg>
-        </td>
-    </tr>
-);
+const reorder = (list, startIndex, endIndex) => {
+    console.log("List : ", list);
+
+    const result = Array.from(list);
+    const [removed] = result.splice(startIndex, 1);
+    result.splice(endIndex, 0, removed);
+
+    return result.map((item, index) => ({ id: item.id, index: index }));
+};
+
+const DragAndDropComponent = ({ items, onEdit, onDelete, onDragEnd, status }) => {
+    return (<DragDropContext onDragEnd={onDragEnd}>
+        <Droppable droppableId="droppable">
+            {(provided) => (
+                <div
+                    {...provided.droppableProps}
+                    ref={provided.innerRef}
+                >
+                    {items.data.map((item, index) => (
+                        <Draggable key={item.id} draggableId={item.id} index={index}>
+                            {(provided) => (
+
+                                <div ref={provided.innerRef}
+                                    {...provided.draggableProps}
+                                    {...provided.dragHandleProps}
+                                    className={`flex justify-between even:bg-white odd:bg-gray-50`}  >
+                                    <div className="p-2 w-full">{item.name}</div>
+                                    <div className="flex py-2">
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            strokeWidth={1.5}
+                                            stroke="currentColor"
+                                            className="size-5 cursor-pointer mx-1"
+                                            onClick={() => onEdit(item.id, status)}
+                                        >
+                                            {status ?
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M15 8.25H9m6 3H9m3 6-3-3h1.5a3 3 0 1 0 0-6M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                                : <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />}
+                                        </svg>
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            strokeWidth={1.5}
+                                            stroke="currentColor"
+                                            className="size-5 cursor-pointer mx-1"
+                                            onClick={() => onDelete(item.id)}
+                                        >
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                        </svg>
+                                    </div>
+                                </div>
+                            )}
+                        </Draggable>
+                    ))}
+                    {provided.placeholder}
+                </div>
+            )}
+        </Droppable>
+    </DragDropContext>)
+}
 
 const ThingsToBuy = () => {
     const navigate = useNavigate();
@@ -48,7 +82,6 @@ const ThingsToBuy = () => {
         setError
     } = useContext(TodoContext);
 
-    const [draggingItem, setDraggingItem] = useState(null);
 
     const [product, setProduct] = useState({ name: '', fromIndia: false, index: 0 });
     const [productList, setProductList] = useState(null);
@@ -83,36 +116,21 @@ const ThingsToBuy = () => {
             .then(() => setFlag(prevFlag => !prevFlag))
             .catch(() => setError('Yikes! Something broke. Try again shortly!'));
     };
-    const dragStart = (e, position) => {
 
+    const onDragEnd = useCallback((result) => {
 
-        setDraggingItem(position);
-    };
-    const dragEnd = (e) => {
-
-        setDraggingItem(null);
-    }
-
-    const drop = (e, targetItem) => {
-
-        // if (!draggingItem) return;
-        const items = activeTab == 1 ? [...productList.data] : [...productsFromIndia.data]
-
-        const currentIndex = draggingItem
-
-        const targetIndex = targetItem
-
-        if (currentIndex !== -1 && targetIndex !== -1) {
-            const updatedItems = [...items];
-            updatedItems.splice(currentIndex, 1);
-            updatedItems.splice(targetIndex, 0, items[draggingItem]);
-
-            const finalIndex = updatedItems.map((items, index) => ({ id: items.id, index: index }))
-
-            updateIndexOfProductsInFirestore(finalIndex).then(() => setFlag(prevFlag => !prevFlag)).catch(() => setError("Yikes! Something broke. Try again shortly!")
-            )
+        if (!result.destination) {
+            return;
         }
-    }
+
+        const { data } = activeTab == 1 ? productList : productsFromIndia
+
+        const reorderedItems = reorder(data, result.source.index, result.destination.index)
+
+        updateIndexOfProductsInFirestore(reorderedItems).then(() => {  setFlag(prevFlag => !prevFlag) })
+            .catch((e) => {console.log(e.message, "message") ; setError('Yikes! Something broke. Try again shortly!')});
+    }, [activeTab, productList, productsFromIndia]);
+
     useEffect(() => {
         const fetchProducts = async () => {
             try {
@@ -133,12 +151,14 @@ const ThingsToBuy = () => {
                 setProductList({ length: products.length, data: products });
 
             } catch (err) {
+                console.log(err.message, "Error");
+                
                 setError("Yikes! Something broke. Try again shortly!");
 
             }
         };
         fetchProducts();
-    }, [flag]);
+    }, [flag, productList, productsFromIndia]);
 
     useEffect(() => {
         if (error) {
@@ -208,57 +228,18 @@ const ThingsToBuy = () => {
                     </div>
                 ) : (
                     <>
-                        {activeTab == 1 && (
-                            <>
-                                <p className="m-4 text-sm leading-6 font-bold bg-gradient-to-r from-cyan-500 to-blue-500 text-gradient">
-                                    House wants vs. wallet’s screams!
-                                </p>
-                                <div className="mx-4 max-h-[calc(100vh-300px)] overflow-auto shadow-md sm:rounded-lg">
-                                    <table className="text-sm text-left border-grey-500">
-                                        <tbody >
-                                            {productList.data.map(product => (
-                                                <ProductItem
-                                                    key={product.id}
-                                                    name={product.name}
-                                                    id={product.id}
-                                                    onEdit={handleEdit}
-                                                    onDelete={handleDelete}
-                                                    status={true}
-                                                    index={product.index}
-                                                    dragStart={dragStart} dragEnd={dragEnd} drop={drop}
-                                                />
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </>
-                        )}
+                        <p className="m-4 text-sm leading-6 font-bold bg-gradient-to-r from-cyan-500 to-blue-500 text-gradient">
 
-                        {activeTab == 2 && (
-                            <>
-                                <p className="m-4 text-sm leading-6 font-bold bg-gradient-to-r from-cyan-500 to-blue-500 text-gradient">
-                                    Essentials we're ordering from our hometown!
-                                </p>
-                                <div className="mx-4 max-h-[calc(100vh-300px)] overflow-auto shadow-md sm:rounded-lg ">
-                                    <table className="text-sm text-left border-grey-500">
-                                        <tbody >
-                                            {productsFromIndia.data.map(product => (
-                                                <ProductItem
-                                                    key={product.id}
-                                                    name={product.name}
-                                                    id={product.id}
-                                                    onEdit={handleEdit}
-                                                    onDelete={handleDelete}
-                                                    status={false}
-                                                    index={product.index}
-                                                    dragStart={dragStart} dragEnd={dragEnd} drop={drop}
-                                                />
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </>
-                        )}
+                            {activeTab == 1 ? "House wants vs. wallet’s screams!" : "Essentials we're ordering from our hometown!"}
+                        </p>
+                        <div className="mx-4 max-h-[calc(100vh-300px)] overflow-auto shadow-md sm:rounded-lg">
+                            <DragAndDropComponent
+                                items={activeTab == 1 ? productList : productsFromIndia}
+                                onEdit={handleEdit}
+                                onDelete={handleDelete}
+                                status={true}
+                                onDragEnd={onDragEnd} />
+                        </div>
                     </>
                 )}
             </div>
@@ -323,7 +304,8 @@ const ThingsToBuy = () => {
                             </div>
                         </div>
                     </form>
-                </div></> : <Loader />}
+                </div></> : <Loader />
+            }
 
         </>
     );

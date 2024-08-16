@@ -13,6 +13,7 @@ import AddExpense from "../views/dashboard/addExpense";
 import AnnualReport from "../views/dashboard/annualReport";
 import ToDoList from "../views/dashboard/toDoList";
 import ThingsToBuy from "../views/dashboard/thingsToBuy";
+// import ThingsToBuy from "../views/dashboard/thingsToBuyCopy";
 import Comparision from "../views/dashboard/comparision";
   const router = createBrowserRouter(
     
