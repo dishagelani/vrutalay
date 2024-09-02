@@ -7,7 +7,7 @@ import { TodoContext } from '../../context/toDoContext';
 import Loader from '../../components/loader';
 
 const reorder = (list, startIndex, endIndex) => {
-    console.log("List : ", list);
+    // console.log("List : ", list);
 
     const result = Array.from(list);
     const [removed] = result.splice(startIndex, 1);
@@ -16,7 +16,7 @@ const reorder = (list, startIndex, endIndex) => {
     return result.map((item, index) => ({ id: item.id, index: index }));
 };
 
-const DragAndDropComponent = ({ items, onEdit, onDelete, onDragEnd, status }) => {
+const DragAndDropComponent = ({ items, onEdit, onDelete, onDragEnd }) => {
     return (<DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="droppable">
             {(provided) => (
@@ -41,11 +41,11 @@ const DragAndDropComponent = ({ items, onEdit, onDelete, onDragEnd, status }) =>
                                             strokeWidth={1.5}
                                             stroke="currentColor"
                                             className="size-5 cursor-pointer mx-1"
-                                            onClick={() => onEdit(item.id, status)}
+                                            onClick={() => onEdit(item.id, !item.fromIndia)}
                                         >
-                                            {status ?
+                                            {item.fromIndia ? <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /> :
                                                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 8.25H9m6 3H9m3 6-3-3h1.5a3 3 0 1 0 0-6M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                                                : <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />}
+                                                }
                                         </svg>
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
@@ -135,6 +135,9 @@ const ThingsToBuy = () => {
         const fetchProducts = async () => {
             try {
                 const documents = await getAllProductsFromFirestore();
+
+                console.log("documents : ", documents);
+                
                 const products_I = [];
                 const products = [];
 
@@ -158,14 +161,15 @@ const ThingsToBuy = () => {
             }
         };
         fetchProducts();
-    }, [flag, productList, productsFromIndia]);
-
+    }, [flag]);
+    
     useEffect(() => {
         if (error) {
             const timer = setTimeout(() => setError(null), 3000);
             return () => clearTimeout(timer);
         }
     }, [error, setError]);
+    // console.log("Products : ", productList, productsFromIndia)
 
     return (
         <>
@@ -237,7 +241,6 @@ const ThingsToBuy = () => {
                                 items={activeTab == 1 ? productList : productsFromIndia}
                                 onEdit={handleEdit}
                                 onDelete={handleDelete}
-                                status={true}
                                 onDragEnd={onDragEnd} />
                         </div>
                     </>

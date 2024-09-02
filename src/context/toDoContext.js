@@ -68,25 +68,33 @@ const TodoContextProvider = ({ children }) => {
         }
     };
     const addProductToFirestore = async (product) => {
+        console.log("Product --> ", product);
+        
         
         try {
             await addDoc(collection(database, "Homeware"), {
                 ...product
             });
         } catch (e) {
+            console.log("error : ", e.message)
             setError("Yikes! Something broke. Try again shortly!");
         }
     };
 
     const deleteProductInFirestore = async (id) => {
+        console.log("Delete");
+        
         try {
             await deleteDoc(doc(database, "Homeware", id));
         } catch (e) {
+            console.log("error : ", e.message)
             setError("Yikes! Something broke. Try again shortly!");
         }
     };
 
     const setProductStatusInFirestore = async (id, status) => {
+        console.log("Status --> ", status);
+        
         try {
             const ref = doc(database, "Homeware", id);
 
@@ -95,7 +103,7 @@ const TodoContextProvider = ({ children }) => {
             });
 
         } catch (e) {
-
+            console.log("error : ", e.message)
             setError("Yikes! Something broke. Try again shortly!");
         }
     };
@@ -122,6 +130,7 @@ const TodoContextProvider = ({ children }) => {
             ); 
             return documents
         } catch (e) {
+            console.log("error : ", e.message)
             setError("Yikes! Something broke. Try again shortly!");
         }
     };
