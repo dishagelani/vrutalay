@@ -1,12 +1,12 @@
 import React, { useContext, useEffect, useState } from 'react'
-import Navbar from '../../components/navbar'
+import Navbar from '../../../components/navbar'
 import moment from 'moment'
 import { useNavigate, useLocation } from 'react-router-dom'
-import Table from '../../components/breakdownTable'
-import { ExpenseContext } from '../../context/expenseContext'
-import Loader from '../../components/loader'
+import Table from '../../../components/breakdownTable'
+import { ExpenseContext } from '../../../context/expenseContext'
+import Loader from '../../../components/loader'
 
-export const Breakdown = () => {
+const Breakdown = () => {
 
   const navigate = useNavigate()
 
@@ -194,3 +194,4 @@ export const Breakdown = () => {
     </div>
   )
 }
+export default Breakdown;

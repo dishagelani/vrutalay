@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useState } from 'react';
-import Navbar from '../../components/navbar';
+import Navbar from '../../../components/navbar';
 import { useNavigate } from 'react-router-dom';
 import moment from 'moment';
-import { ExpenseContext } from '../../context/expenseContext';
-import Loader from '../../components/loader';
+import { ExpenseContext } from '../../../context/expenseContext';
+import Loader from '../../../components/loader';
 
 const AnnualReport = () => {
   const navigate = useNavigate()

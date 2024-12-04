@@ -1,9 +1,9 @@
 import { useState, useEffect, useContext, useCallback } from 'react';
-import Navbar from '../../components/navbar';
-import Alert from '../../components/alert';
+import Navbar from '../../../components/navbar';
+import Alert from '../../../components/alert';
 import { useNavigate } from 'react-router-dom';
-import { TodoContext } from '../../context/toDoContext';
-import Loader from '../../components/loader';
+import { TodoContext } from '../../../context/toDoContext';
+import Loader from '../../../components/loader';
 
 const ToDoList = () => {
     const navigate = useNavigate();

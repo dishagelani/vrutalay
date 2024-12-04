@@ -1,10 +1,10 @@
 import { useState, useEffect, useContext, useCallback } from 'react';
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import Navbar from '../../components/navbar';
-import Alert from '../../components/alert';
+import Navbar from '../../../components/navbar';
+import Alert from '../../../components/alert';
 import { useNavigate } from 'react-router-dom';
-import { TodoContext } from '../../context/toDoContext';
-import Loader from '../../components/loader';
+import { TodoContext } from '../../../context/toDoContext';
+import Loader from '../../../components/loader';
 
 const reorder = (list, startIndex, endIndex) => {
     // console.log("List : ", list);

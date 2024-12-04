@@ -2,10 +2,10 @@ import moment from "moment";
 import { useContext, useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import Navbar from "../../components/navbar";
-import Alert from "../../components/alert";
+import Navbar from "../../../components/navbar";
+import Alert from "../../../components/alert";
 import { useNavigate, useLocation } from "react-router-dom";
-import { ExpenseContext } from "../../context/expenseContext";
+import { ExpenseContext } from "../../../context/expenseContext";
 
 export default function AddExpense() {
 

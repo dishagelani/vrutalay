@@ -1,11 +1,11 @@
 
 import React, { useEffect, useContext, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import Table from '../../components/expenseTable'
-import Navbar from '../../components/navbar'
+import Table from '../../../components/expenseTable'
+import Navbar from '../../../components/navbar'
 import moment from 'moment'
-import { ExpenseContext } from '../../context/expenseContext'
-import Loader from '../../components/loader'
+import { ExpenseContext } from '../../../context/expenseContext'
+import Loader from '../../../components/loader'
 
 const Expenses = () => {
   const navigate = useNavigate()
@@ -60,7 +60,7 @@ const Expenses = () => {
             )}
           </div>
 
-          {/* BUTTON TO ADD EXPENSE */}
+          {/* BUTTON TO ADD EXPENSE ANd MONTH LISTING*/}
 
           <div className="fixed bottom-0 right-0 w-full p-4">
             <div className="flex justify-between">
@@ -70,7 +70,7 @@ const Expenses = () => {
                 className="block p-2 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 onChange={(e) => setCurrentMonth(e.target.value)}
               >
-                {Array.from({ length: 11 - (moment().year() == 2024 ? 5 : 0) + 1 }, (_, i) =>
+                {Array.from({ length: 11 - (moment().year() == 2024 ? 4 : 0) + 1 }, (_, i) =>
                   moment().month((moment().year() == 2024 ? 4 : 0) + i).format('MMMM')
                 ).reverse().map(month => <option key={month} value={month}>{month}</option>)}
               </select>
