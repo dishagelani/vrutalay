@@ -11,7 +11,7 @@ const Modal = ({ isOpen, onClose, title, children, footerButtons }) => {
         >
             <div className="relative p-4 w-full max-w-2xl">
                 {/* Modal Content */}
-                <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                <div className="relative bg-white shadow dark:bg-gray-700">
                     {/* Modal Header */}
                     <div className="flex items-center justify-between p-4 border-b rounded-t dark:border-gray-600">
                         <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
