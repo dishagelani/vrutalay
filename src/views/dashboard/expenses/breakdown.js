@@ -144,10 +144,10 @@ const Breakdown = () => {
           {/* Back button with amount */}
 
           <div className="relative flex justify-between max-w-full flex-grow flex-1 font-semibold text-blueGray-700">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 cursor-pointer" onClick={() => navigate('/')}>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 cursor-pointer" onClick={() => navigate(-1)}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
             </svg>
-            <p className='bg-gradient-to-r from-cyan-500 to-blue-500 text-gradient font-bold'>${totalAmount}</p>
+            <p className='bg-gradient-to-r from-cyan-500 to-blue-500 text-gradient font-bold'>${totalAmount.toString().split('.')[1]?.length > 2 ? parseFloat(totalAmount).toFixed(2) : totalAmount}</p>
           </div>
 
           {/* Tabs */}

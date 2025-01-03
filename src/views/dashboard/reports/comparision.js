@@ -15,13 +15,13 @@ const Comparision = () => {
 
     const [chartData, setChartData] = useState(null);
     const [openModal, setOpenModal] = useState(false);
-    const [selectedData, setSelectedData] = useState(null); 
+    const [selectedData, setSelectedData] = useState(null);
 
     useEffect(() => {
-        async function getReport() {
+         const getReport = async () => {
             const report = await getAllExpensesByYearFromFirestore(year);
 
-            function categorizeAndGroupData(data) {
+            const categorizeAndGroupData = (data) => {
                 const categorizedData = {};
 
                 data.forEach(item => {
@@ -35,7 +35,7 @@ const Comparision = () => {
                     if (!categorizedData[category][monthName]) {
                         categorizedData[category][monthName] = {
                             amount: 0,
-                            breakdown: [] 
+                            breakdown: []
                         };
                     }
 
@@ -43,7 +43,7 @@ const Comparision = () => {
                     categorizedData[category][monthName].breakdown.push({ amount: parseFloat(amount), description });
                 });
 
-                const categoryOrder = ['Grocery', 'Milk', 'Transportation', 'Laundry', 'Other'];
+                const categoryOrder = ['Grocery', 'Milk', 'Transportation', 'Other'];
 
                 const result = categoryOrder.map(category => {
                     if (categorizedData[category]) {
@@ -52,8 +52,10 @@ const Comparision = () => {
                             amount: categorizedData[category][monthName].amount,
                             breakdown: categorizedData[category][monthName].breakdown
                         }));
+                        console.log(monthData, "Month dtata")
                         return {
                             category,
+                            average : Math.round(monthData.reduce((acc,val)  => acc + val.amount,0) / monthData.length), 
                             monthData
                         };
                     }
@@ -70,8 +72,8 @@ const Comparision = () => {
     }, [year]);
 
     const handleBarClick = (datum) => {
-        setSelectedData(datum); 
-        setOpenModal(true); 
+        setSelectedData(datum);
+        setOpenModal(true);
     };
 
     return (
@@ -87,11 +89,11 @@ const Comparision = () => {
                     </div>
 
                     <div className='py-4'>
-                        {chartData.map(({ category, monthData }) =>
+                        {chartData.map(({ category, average, monthData }) =>
                             <AgCharts key={category} shadow={true} fill={'red'}
                                 options={{
                                     title: {
-                                        text: category,
+                                        text:`${category} ($${average})`,
                                     },
                                     data: monthData,
                                     series: [
@@ -102,7 +104,7 @@ const Comparision = () => {
                                             yKey: "amount",
                                             listeners: {
                                                 nodeClick: (event) => {
-                                                    const { datum } = event; 
+                                                    const { datum } = event;
                                                     handleBarClick(datum);
                                                 },
                                             },
@@ -120,7 +122,7 @@ const Comparision = () => {
                         footerButtons={[
                             {
                                 label: 'Close',
-                                className: 'py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 dark:bg-gray-800 dark:text-gray-400',
+                                className: 'py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700',
                                 onClick: () => setOpenModal(false),
                             },
                         ]}
@@ -128,7 +130,7 @@ const Comparision = () => {
                         <ul>
                             {selectedData?.breakdown?.map((item, index) => (
                                 <li key={index}>
-                                     ${item.amount} - {item.description}
+                                    ${item.amount} - {item.description}
                                 </li>
                             ))}
                         </ul>

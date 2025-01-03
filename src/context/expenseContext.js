@@ -53,15 +53,14 @@ const ExpenseContextProvider = ({ children }) => {
         try {
             const startOfMonth = moment(`${year}-${month}-01`).startOf('month').toDate();
             const endOfMonth = moment(startOfMonth).endOf('month').toDate();
-            
-            // Query Firestore for documents within the specified date range
+
             const q = query(
                 collection(database, "Expenses"),
                 where("date", ">=", startOfMonth),
                 where("date", "<=", endOfMonth),
                 orderBy("date", "desc")
             );
-            
+
             const querySnapshot = await getDocs(q);
             // const querySnapshot = await getDocs(collection(database, "Expenses"), orderBy("timestamp", "desc"));
             const documents = querySnapshot.docs.map(doc => ({

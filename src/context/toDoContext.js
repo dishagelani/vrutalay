@@ -1,6 +1,6 @@
 import { createContext, useState } from "react";
 import { database } from "../firebase";
-import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc,  query, where, orderBy } from "firebase/firestore";
+import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc, query, where, orderBy } from "firebase/firestore";
 
 const TodoContext = createContext();
 
@@ -29,18 +29,15 @@ const TodoContextProvider = ({ children }) => {
         try {
             const q = query(collection(database, 'Tasks'), where('completed', '==', true));
 
-            // Get documents matching the query
             const querySnapshot = await getDocs(q);
-        
-            // Delete each document
+
             const deletePromises = querySnapshot.docs.map(docSnap => {
-              const docRef = doc(database, 'Tasks', docSnap.id);
-              return deleteDoc(docRef);
+                const docRef = doc(database, 'Tasks', docSnap.id);
+                return deleteDoc(docRef);
             });
-        
-            // Wait for all deletions to complete
+
             await Promise.all(deletePromises);
-        
+
         } catch (e) {
             setError("Yikes! Something broke. Try again shortly!");
         }
@@ -67,10 +64,8 @@ const TodoContextProvider = ({ children }) => {
             setError("Yikes! Something broke. Try again shortly!");
         }
     };
+    
     const addProductToFirestore = async (product) => {
-        console.log("Product --> ", product);
-        
-        
         try {
             await addDoc(collection(database, "Homeware"), {
                 ...product
@@ -82,8 +77,6 @@ const TodoContextProvider = ({ children }) => {
     };
 
     const deleteProductInFirestore = async (id) => {
-        console.log("Delete");
-        
         try {
             await deleteDoc(doc(database, "Homeware", id));
         } catch (e) {
@@ -93,8 +86,6 @@ const TodoContextProvider = ({ children }) => {
     };
 
     const setProductStatusInFirestore = async (id, status) => {
-        console.log("Status --> ", status);
-        
         try {
             const ref = doc(database, "Homeware", id);
 
@@ -107,7 +98,7 @@ const TodoContextProvider = ({ children }) => {
             setError("Yikes! Something broke. Try again shortly!");
         }
     };
-   
+
     const updateIndexOfProductsInFirestore = async (finalIndex) => {
         finalIndex.forEach(async ({ id, index }) => {
             try {
@@ -117,17 +108,16 @@ const TodoContextProvider = ({ children }) => {
                     index: index
                 });;
             } catch (error) {
-              console.error(`Error updating document with ID ${id}:`, error);
+                console.error(`Error updating document with ID ${id}:`, error);
             }
-          });
+        });
     }
     const getAllProductsFromFirestore = async () => {
         try {
             const documents = await getDocs(query(
                 collection(database, "Homeware"),
-              
-                orderBy('index', 'asc') )
-            ); 
+                orderBy('index', 'asc'))
+            );
             return documents
         } catch (e) {
             console.log("error : ", e.message)
@@ -136,7 +126,7 @@ const TodoContextProvider = ({ children }) => {
     };
 
     return (
-        <TodoContext.Provider value={{ addTaskToFirestore, setTaskAsCompleteInFirestore, deleteTaskInFirestore, deleteCompletedTaskInFirestore,getAllTasksFromFirestore, getAllProductsFromFirestore, setProductStatusInFirestore, updateIndexOfProductsInFirestore, deleteProductInFirestore, addProductToFirestore, error, setError }}>
+        <TodoContext.Provider value={{ addTaskToFirestore, setTaskAsCompleteInFirestore, deleteTaskInFirestore, deleteCompletedTaskInFirestore, getAllTasksFromFirestore, getAllProductsFromFirestore, setProductStatusInFirestore, updateIndexOfProductsInFirestore, deleteProductInFirestore, addProductToFirestore, error, setError }}>
             {children}
         </TodoContext.Provider>
     );

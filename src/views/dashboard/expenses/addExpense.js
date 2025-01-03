@@ -9,14 +9,14 @@ import { ExpenseContext } from "../../../context/expenseContext";
 
 export default function AddExpense() {
 
-    let initialObject = {date : moment()._d, amount : '', description : '', category : ''}
+    let initialObject = { date: moment()._d, amount: '', description: '', category: '' }
 
     const location = useLocation();
 
     if (location.state) {
-        const { date,amount,description,category,id } = location.state
+        const { date, amount, description, category, id } = location.state
         initialObject.id = id
-        initialObject.date = moment(date && date.seconds * 1000 + Math.floor(date.nanoseconds / 1000000 ))._d
+        initialObject.date = moment(date && date.seconds * 1000 + Math.floor(date.nanoseconds / 1000000))._d
         initialObject.amount = amount
         initialObject.description = description
         initialObject.category = category
@@ -24,19 +24,19 @@ export default function AddExpense() {
 
     const navigate = useNavigate()
 
-    const { setError, error, addExpenseToFirestore,editExpenseInFirestore } = useContext(ExpenseContext)
+    const { setError, error, addExpenseToFirestore, editExpenseInFirestore } = useContext(ExpenseContext)
 
     const [data, setData] = useState(initialObject)
 
     const quotes = ['Money, like emotions, is something you must control to keep your life on the right track !', 'Making money is a happiness. Making other people happy is also a happiness. So why don’t we do both and maximize our happiness?', 'Don’t get so busy making a living that you forget to make a life !', 'Wealth is not his that has it, but his that enjoys it !', 'Money is only a tool. It will take you wherever you wish, but it will not replace you as the driver. It will give you the means for the satisfaction of your desires, but it will not provide you with desires !', 'You must gain control over your money or the lack of it will forever control you !', 'Happiness is not in the mere possession of money; it lies in the joy of achievement, in the thrill of creative effort !']
 
-    const categories = [null, 'Grocery', 'Milk', 'Transportation', 'Laundry', 'Mobile bill','Home essentials','Rent','Disha','Udhhav', 'Other']
+    const categories = [null, 'Grocery', 'Milk', 'Home essentials', 'Transportation', 'Mobile bill', 'Banking', 'Laundry', 'Rent', 'Disha', 'Udhhav', 'Other']
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        if(initialObject.id){
+        if (initialObject.id) {
             editExpenseInFirestore(data).then(() => navigate('/'))
-        }else{
+        } else {
             addExpenseToFirestore(data).then(() => navigate("/"))
         }
     }
@@ -55,8 +55,9 @@ export default function AddExpense() {
                 <div className="space-y-12 mx-4">
                     <div className="py-4">
                         <p className="mt-1 text-sm leading-6 font-bold text-center bg-gradient-to-r from-cyan-500 to-blue-500 text-gradient">
-                            {quotes[moment().day()]}           </p>
-                       
+                            {quotes[moment().day()]}
+                        </p>
+
                         <div className="mt-8 grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-6">
                             <div className="sm:col-span-3">
 
