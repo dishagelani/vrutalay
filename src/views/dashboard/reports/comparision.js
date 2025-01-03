@@ -52,7 +52,7 @@ const Comparision = () => {
                             amount: categorizedData[category][monthName].amount,
                             breakdown: categorizedData[category][monthName].breakdown
                         }));
-                        console.log(monthData, "Month dtata")
+                      
                         return {
                             category,
                             average : Math.round(monthData.reduce((acc,val)  => acc + val.amount,0) / monthData.length), 
