@@ -49,34 +49,70 @@ const ExpenseContextProvider = ({ children }) => {
             setError("Yikes! Something broke. Try again shortly!");
         }
     };
+
     const getAllExpensesByMonthFromFirestore = async (month, year) => {
         try {
-            const startOfMonth = moment(`${year}-${month}-01`).startOf('month').toDate();
+            // Convert month name (e.g., 'January') to a number if necessary
+            const monthNumber = typeof month === "string" ? moment().month(month).month() : month; 
+    
+            // Ensure the month is properly formatted in numeric (zero-padded) format
+            const startOfMonth = moment(`${year}-${monthNumber + 1}-01`).startOf('month').toDate();
             const endOfMonth = moment(startOfMonth).endOf('month').toDate();
 
+    
             const q = query(
                 collection(database, "Expenses"),
                 where("date", ">=", startOfMonth),
                 where("date", "<=", endOfMonth),
                 orderBy("date", "desc")
             );
-
+    
             const querySnapshot = await getDocs(q);
-            // const querySnapshot = await getDocs(collection(database, "Expenses"), orderBy("timestamp", "desc"));
             const documents = querySnapshot.docs.map(doc => ({
                 id: doc.id,
                 ...doc.data()
             }));
-
-            setTotalAmount(documents.reduce((accumulator, current) => {
+            const total = documents.reduce((accumulator, current) => {
                 return accumulator + parseFloat(current.amount);
-            }, 0))
-
-            return documents
+            }, 0) 
+            
+            setTotalAmount(total.toString().split('.')[1]?.length > 2 ? parseFloat(total).toFixed(2) : total);
+    
+            return documents;
         } catch (e) {
+            console.log(e, "e")
             setError("Yikes! Something broke. Try again shortly!");
         }
     };
+    
+    // const getAllExpensesByMonthFromFirestore = async (month, year) => {
+    //     try {
+    //         const startOfMonth = moment(`${year}-${month}-01`).startOf('month').toDate();
+    //         const endOfMonth = moment(startOfMonth).endOf('month').toDate();
+
+    //         const q = query(
+    //             collection(database, "Expenses"),
+    //             where("date", ">=", startOfMonth),
+    //             where("date", "<=", endOfMonth),
+    //             orderBy("date", "desc")
+    //         );
+
+    //         const querySnapshot = await getDocs(q);
+    //         // const querySnapshot = await getDocs(collection(database, "Expenses"), orderBy("timestamp", "desc"));
+    //         const documents = querySnapshot.docs.map(doc => ({
+    //             id: doc.id,
+    //             ...doc.data()
+    //         }));
+
+    //         setTotalAmount(documents.reduce((accumulator, current) => {
+    //             return accumulator + parseFloat(current.amount);
+    //         }, 0))
+
+    //         return documents
+    //     } catch (e) {
+    //         setError("Yikes! Something broke. Try again shortly!");
+    //     }
+    // };
     const getAllExpensesByYearFromFirestore = async (year) => {
         try {
 

@@ -13,6 +13,7 @@ const Expenses = () => {
   const [fetchData, setFetchData] = useState(true)
   const [expenses, setExpenses] = useState(null)
   const [currentMonth, setCurrentMonth] = useState(moment().format('MMMM'))
+  const [currentYear, setCurrentYear] = useState(moment().year())
 
   const { getAllExpensesByMonthFromFirestore, totalAmount } = useContext(ExpenseContext)
 
@@ -22,12 +23,12 @@ const Expenses = () => {
 
   useEffect(() => {
     async function getAllExpenses() {
-      const expensesArray = await getAllExpensesByMonthFromFirestore(currentMonth, moment().year())
+      const expensesArray = await getAllExpensesByMonthFromFirestore(currentMonth, currentYear)
       setExpenses(expensesArray)
     }
     getAllExpenses()
 
-  }, [fetchData, currentMonth])
+  }, [fetchData, currentMonth, currentYear])
 
   return (
     <>
@@ -39,11 +40,11 @@ const Expenses = () => {
 
           <div className="rounded-t mb-0 py-4 border-0">
             <div className="relative flex justify-between max-w-full flex-grow flex-1 font-semibold text-blueGray-700">
-              <p className="month">{currentMonth} {moment().year()}</p>
+              <p className="month">{currentMonth} {currentYear}</p>
               <p>${totalAmount} <span>{totalAmount >= 2500 ? '🥶' : totalAmount > 2200 ? '😥' : '😃'}</span></p>
             </div>
             <div className="relative w-full max-w-full flex-grow flex-1 text-right">
-              <p className="bg-gradient-to-r from-cyan-500 to-blue-500 text-gradient text-xs font-bold cursor-pointer" onClick={() => navigate("/breakdown", { state: { month: currentMonth, year: moment().year() } })} >View breakdown</p>
+              <p className="bg-gradient-to-r from-cyan-500 to-blue-500 text-gradient text-xs font-bold cursor-pointer" onClick={() => navigate("/breakdown", { state: { month: currentMonth, year: currentYear } })} >View breakdown</p>
             </div>
           </div>
 
@@ -64,16 +65,27 @@ const Expenses = () => {
 
           <div className="fixed bottom-0 right-0 w-full p-4">
             <div className="flex justify-between">
-              <select
-                required
-                value={currentMonth}
-                className="block p-2 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6  cursor-pointer"
-                onChange={(e) => setCurrentMonth(e.target.value)}
-              >
-                {Array.from({ length: 11 - (moment().year() == 2024 ? 4 : 0) + 1 }, (_, i) =>
-                  moment().month((moment().year() == 2024 ? 4 : 0) + i).format('MMMM')
-                ).reverse().map(month => <option key={month} value={month}>{month}</option>)}
-              </select>
+              <div className='flex'>
+
+                <select
+                  required
+                  value={currentMonth}
+                  className="block p-2 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6  cursor-pointer"
+                  onChange={(e) => setCurrentMonth(e.target.value)}
+                >
+                  {Array.from({ length: 11 - (currentYear == 2024 ? 4 : 0) + 1 }, (_, i) =>
+                    moment().month((currentYear == 2024 ? 4 : 0) + i).format('MMMM')
+                  ).reverse().map(month => <option key={month} value={month}>{month}</option>)}
+                </select>
+                <select
+                  required
+                  value={currentYear}
+                  className="block mx-2 p-2 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6  cursor-pointer"
+                  onChange={(e) => setCurrentYear(e.target.value)}
+                >
+                  {Array.from({ length: moment().year() - 2024 + 1 }, (_, i) => 2024 + i).reverse().map(year => <option key={year} value={year}>{year}</option>)}
+                </select>
+              </div>
               <div className="text-white cursor-pointer shadow-xl p-3 ml-2 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 z-50" onClick={() => navigate('/add-expense')}>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
